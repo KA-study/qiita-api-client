@@ -3,7 +3,7 @@
 import argparse
 
 from fetcher import fetcher
-from processor import normalize
+from processor import normalize, sort_data
 
 from config import (
     TAG_DEFAULT,
@@ -37,7 +37,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--sort",
         default=SORT_DEFAULT,
-        choices=["created", "reactions", "stock"],
+        choices=["created_at", "updated_at", "likes"],
         help="set a sorting criteria.",
     )
     parser.add_argument(
@@ -75,4 +75,6 @@ def main():
     json = fetcher(params)
 
     # normalizeは一つずつの記事を処理
-    date = [normalize(item) for item in json]
+    data = [normalize(item) for item in json]
+
+    sorted_data = sort_data(data, args)
