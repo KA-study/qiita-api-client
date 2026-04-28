@@ -1,7 +1,8 @@
 URL = "https://qiita.com/api/v2/items"
 
 TAG_DEFAULT = "python"
-SORT_DEFAULT = "created"
 KEYWORD_DEFAULT = ""
+QUERY_DEFAULT = ""
+SORT_DEFAULT = "created"
 PAGE_DEFAULT = 1
-LIMIT_DEFAULT = 100
+PER_PAGE_DEFAULT = 100
