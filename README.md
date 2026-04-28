@@ -29,7 +29,6 @@ python main.py --tag python --sort likes --keyword scraping
 ## 使用技術
 - Python 
 - requests
-- BeautifulSoup
 - argparse
 
 ## 設計の工夫
