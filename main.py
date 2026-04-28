@@ -3,6 +3,7 @@
 import argparse
 
 from fetcher import fetcher
+from processor import normalize
 
 from config import (
     TAG_DEFAULT,
@@ -59,10 +60,12 @@ def build_query(args: argparse.Namespace) -> str:
     parts.append(f"tag:{args.tag}")
     parts.append(args.query)
 
+    # クエリパラメーターはスペース区切りの文字列。
     return " ".join(parts)
 
 
 def main():
+    # CLI入力 → クエリ構築 → API取得 → 正規化 → 出力
     args = parse_arguments()
 
     puery = build_query(args)
@@ -70,3 +73,6 @@ def main():
     params = {"query": puery, "page": args.page, "per_page": args.per_page}
 
     json = fetcher(params)
+
+    # normalizeは一つずつの記事を処理
+    date = [normalize(item) for item in json]
