@@ -4,6 +4,7 @@ import argparse
 
 from fetcher import fetcher
 from processor import normalize, sort_data
+from output import output
 
 from config import (
     TAG_DEFAULT,
@@ -78,3 +79,8 @@ def main():
     data = [normalize(item) for item in json]
 
     sorted_data = sort_data(data, args)
+
+    output(sorted_data)
+
+
+main()

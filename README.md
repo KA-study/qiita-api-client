@@ -19,7 +19,7 @@ python main.py --tag python --sort likes --keyword scraping
 
 ## ファイル構造
 - main.py: CLIエントリーポイント。各モジュールを統合して実行する。
-- scraper.py: Qiitaから記事メタ情報を取得する。
+- fetcher.py: Qiitaから記事メタ情報を取得する。
 - processor.py: フィルタ・ソートなどデータ処理を行う。
 - output.py: CSV/JSON形式で出力する。
 
@@ -33,5 +33,5 @@ python main.py --tag python --sort likes --keyword scraping
 
 ## 設計の工夫
 - メタ情報のみに限定し、コンパクトで実用的なプログラムを設計。
-- scraper/ processor/ output　に責務を分離し、保守性と拡張性を確保。
+- fetcher/ processor/ output　に責務を分離し、保守性と拡張性を確保。
 
