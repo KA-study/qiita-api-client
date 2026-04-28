@@ -2,7 +2,14 @@
 
 import argparse
 
-from config import URL, TAG_DEFAULT, SORT_DEFAULT, KEYWORD_DEFAULT, LIMIT_DEFAULT
+from config import (
+    URL,
+    TAG_DEFAULT,
+    SORT_DEFAULT,
+    KEYWORD_DEFAULT,
+    LIMIT_DEFAULT,
+    PAGE_DEFAULT,
+)
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -24,6 +31,9 @@ def parse_arguments() -> argparse.Namespace:
         help="set a keyword relate to what you are interested in.",
     )
     parser.add_argument(
+        "--page", default=PAGE_DEFAULT, help="set a page number you need"
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=LIMIT_DEFAULT,
@@ -33,5 +43,16 @@ def parse_arguments() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def build_query(args: argparse.Namespace) -> str:
+    parts = []
+
+    parts.append(args.keyword)
+    parts.append(f"tag:{args.tag}")
+
+    return " ".join(parts)
+
+
 def main():
     args = parse_arguments()
+
+    params = build_query(args)
