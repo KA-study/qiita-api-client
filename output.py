@@ -4,6 +4,7 @@
 def format_item(item: dict, index: int) -> str:
     return (
         f"[{index}] {item["title"]}\n"
+        f"    tags: {item["tags"]}\n"
         f"    likes: {item.get("likes", 0)}\n"
         f"    created_at: {item.get("created_at")}\n"
         f"    url: {item["url"]}\n"

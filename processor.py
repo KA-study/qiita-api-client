@@ -30,7 +30,7 @@ def sort_data(data: list, args: argparse.Namespace) -> list:
         case "created_at" | "updated_at" as date:
             sorted_data = sorted(data, key=lambda x: datetime.fromisoformat(x[date]))
         case "likes":
-            sorted_data = sorted(data, key=lambda x: x["likes"])
+            sorted_data = sorted(data, key=lambda x: x["likes"], reverse=True)
 
     if not sorted_data:
         raise ValueError("sorting process failed.")
