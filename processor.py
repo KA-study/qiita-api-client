@@ -26,7 +26,8 @@ def normalize(item: dict) -> dict:
 def sort_data(data: list, args: argparse.Namespace) -> list:
     sorted_data = []
 
-    match args.sort:
+    # argsは、mainのほうで.sortを付与している。
+    match args:
         case "created_at" | "updated_at" as date:
             sorted_data = sorted(data, key=lambda x: datetime.fromisoformat(x[date]))
         case "likes":

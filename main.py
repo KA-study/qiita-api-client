@@ -10,9 +10,9 @@ from config import (
     TAG_DEFAULT,
     KEYWORD_DEFAULT,
     QUERY_DEFAULT,
-    SORT_DEFAULT,
     PER_PAGE_DEFAULT,
     PAGE_DEFAULT,
+    SortOption,
 )
 
 
@@ -37,12 +37,12 @@ def parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "--sort",
-        default=SORT_DEFAULT,
-        choices=["created_at", "updated_at", "likes"],
+        default=SortOption.CREATED_AT.name,
+        choices=[s.name for s in SortOption],
         help="set a sorting criteria.",
     )
     parser.add_argument(
-        "--page", default=PAGE_DEFAULT, help="set a page number you need"
+        "--page", type=int, default=PAGE_DEFAULT, help="set a page number you need"
     )
     parser.add_argument(
         "--per_page",
@@ -51,7 +51,11 @@ def parse_arguments() -> argparse.Namespace:
         help="set the number of articles you want to get from a page.",
     )
 
-    return parser.parse_args()
+    # 文字列を.nameとして扱い、メンバを呼び出す。
+    args = parser.parse_args()
+    args.sort = SortOption[args.sort]
+
+    return args
 
 
 def build_query(args: argparse.Namespace) -> str:
@@ -69,16 +73,16 @@ def main():
     # CLI入力 → クエリ構築 → API取得 → 正規化 → 出力
     args = parse_arguments()
 
-    puery = build_query(args)
+    query = build_query(args)
 
-    params = {"query": puery, "page": args.page, "per_page": args.per_page}
+    params = {"query": query, "page": args.page, "per_page": args.per_page}
 
     json = fetcher(params)
 
     # normalizeは一つずつの記事を処理
     data = [normalize(item) for item in json]
 
-    sorted_data = sort_data(data, args)
+    sorted_data = sort_data(data, args.sort)
 
     output(sorted_data)
 
