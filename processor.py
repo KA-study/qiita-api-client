@@ -2,6 +2,8 @@
 import argparse
 from datetime import datetime
 
+from config import SortOption
+
 
 def normalize(item: dict) -> dict:
     # Qiita API response を内部で扱う共通フォーマットに整形
@@ -23,17 +25,14 @@ def normalize(item: dict) -> dict:
         raise ValueError(f"Invalid item structure: missing {ex}")
 
 
-def sort_data(data: list, args: argparse.Namespace) -> list:
-    sorted_data = []
-
+def sort_data(data: list, args_sort: SortOption) -> list:
     # argsは、mainのほうで.sortを付与している。
-    match args:
-        case "created_at" | "updated_at" as date:
-            sorted_data = sorted(data, key=lambda x: datetime.fromisoformat(x[date]))
-        case "likes":
-            sorted_data = sorted(data, key=lambda x: x["likes"], reverse=True)
 
-    if not sorted_data:
-        raise ValueError("sorting process failed.")
+    match args_sort:
+        case SortOption.CREATED_AT | SortOption.UPDATED_AT:
+            key = args_sort.value[0]
+            return sorted(data, key=lambda x: datetime.fromisoformat(x[key]))
+        case SortOption.LIKES:
+            return sorted(data, key=lambda x: x["likes"], reverse=True)
 
-    return sorted_data
+    raise ValueError("sorting process failed.")
