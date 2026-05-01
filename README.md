@@ -24,7 +24,7 @@ python main.py --tag python --sort likes --keyword scraping
 - output.py: CSV/JSON形式で出力する。
 
 ## このプログラムにおける言葉の定義
-- メタ情報/メタデータ：　識別子、タイトル、URL、投稿日時、更新日時、著者情報、タグ、ストック数、文字数
+- メタ情報/メタデータ：　タイトル、URL、投稿日時、更新日時、著者情報、タグ、ストック数、文字数
 
 ## 使用技術
 - Python 
@@ -35,3 +35,5 @@ python main.py --tag python --sort likes --keyword scraping
 - メタ情報のみに限定し、コンパクトで実用的なプログラムを設計。
 - fetcher/ processor/ output　に責務を分離し、保守性と拡張性を確保。
 
+## プログラムの課題
+- 並び替えシステムの中で、API依存であるもの（特にlikes）が、その使用上、完全には並び替えられない。

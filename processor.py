@@ -1,7 +1,4 @@
 # filter and sort logic
-import argparse
-from datetime import datetime
-
 from config import SortOption
 
 
@@ -11,6 +8,7 @@ def normalize(item: dict) -> dict:
         return {
             "id": item["id"],
             "title": item["title"],
+            "title_length": len(item["title"]),
             "url": item["url"],
             "created_at": item["created_at"],
             "updated_at": item["updated_at"],
@@ -18,7 +16,13 @@ def normalize(item: dict) -> dict:
                 "id": item["user"]["id"],
                 "name": item["user"]["name"],
             },
+            # itemの要素のtagsの構造は以下である。
+            # "tags": [
+            #   {"name": "Python"},
+            #   {"name": "FastAPI"},
+            # ]
             "tags": [tag["name"] for tag in item["tags"]],
+            "tag_count": len(item["title"]),
             "likes": item["likes_count"],
         }
     except KeyError as ex:
@@ -28,11 +32,8 @@ def normalize(item: dict) -> dict:
 def sort_data(data: list, args_sort: SortOption) -> list:
     # argsは、mainのほうで.sortを付与している。
 
-    match args_sort:
-        case SortOption.CREATED_AT | SortOption.UPDATED_AT:
-            key = args_sort.value[0]
-            return sorted(data, key=lambda x: datetime.fromisoformat(x[key]))
-        case SortOption.LIKES:
-            return sorted(data, key=lambda x: x["likes"], reverse=True)
+    # is_api_supportedがTrueの場合、すでに並び替え済み。
+    if not args_sort.value[1]:
+        return sorted(data, key=lambda item: item[args_sort.value[0]], reverse=True)
 
-    raise ValueError("sorting process failed.")
+    return data

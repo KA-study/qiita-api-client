@@ -16,7 +16,9 @@ class SortOption(Enum):
     UPDATED_AT = ("updated_at", True)
     LIKES = ("likes", True)
     STOCKS = ("stocks", True)
-    TITEL = ("title", False)
+
+    TITEL_LENGTH = ("title_length", False)
+    TAG_COUNT = ("tag_count", False)
 
     def __init__(self, key: str, is_api_supported: bool):
         self.__key = key

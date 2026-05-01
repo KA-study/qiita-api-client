@@ -32,14 +32,17 @@ def parse_arguments() -> argparse.Namespace:
         "--query",
         default=QUERY_DEFAULT,
         help="""set strings in query format.
-        The choices are user/stocks/created/title....
+        The choices are user/stocks/created/title....\n
+        Do not include --sort parameter as an puery.
         """,
     )
     parser.add_argument(
+        # choicesを決めておくことで、誤った入力があった時に正常終了し、ただし選択肢をユーザーに伝える。
         "--sort",
         default=SortOption.CREATED_AT.name,
         choices=[s.name for s in SortOption],
-        help="set a sorting criteria.",
+        help="set a sorting criteria.\n "
+        "Some functions can be used via API, while others can only be used locally.",
     )
     parser.add_argument(
         "--page", type=int, default=PAGE_DEFAULT, help="set a page number you need"
@@ -54,6 +57,10 @@ def parse_arguments() -> argparse.Namespace:
     # 文字列を.nameとして扱い、メンバを呼び出す。
     args = parser.parse_args()
     args.sort = SortOption[args.sort]
+
+    # 並び替えのパラメータはすべてSortOptionに束ね、クエリには含めない。
+    if "sort:" in args.query:
+        raise ValueError("sortは--sortで指定してください。")
 
     return args
 
@@ -75,7 +82,14 @@ def main():
 
     query = build_query(args)
 
-    params = {"query": query, "page": args.page, "per_page": args.per_page}
+    params = {
+        "query": query,
+        "page": args.page,
+        "per_page": args.per_page,
+    }
+    if args.sort.value[1]:
+        params["sort"] = args.sort.value[0]
+        params["order"] = "desc"
 
     json = fetcher(params)
 
