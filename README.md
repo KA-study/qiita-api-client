@@ -1,4 +1,4 @@
-# QiitaScraper
+# Qiita API Client
 
 ## 概要
 Qiitaから記事のメタ情報を取得し、条件に応じてソート・出力するCLIツールです。
