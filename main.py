@@ -2,7 +2,7 @@
 
 import argparse
 
-from fetcher import FetchClientAbstract, QiitaClient
+from fetcher import QiitaClient
 from processor import normalize, sort_data
 from output import output
 
@@ -13,8 +13,8 @@ from config import (
     QUERY_DEFAULT,
     PER_PAGE_DEFAULT,
     PAGE_DEFAULT,
-    SortOption,
 )
+from processor import parse_sort_option, SORT_MAP
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -40,10 +40,9 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         # choicesを決めておくことで、誤った入力があった時に正常終了し、ただし選択肢をユーザーに伝える。
         "--sort",
-        default=SortOption.CREATED_AT.name,
-        choices=[s.name for s in SortOption],
-        help="set a sorting criteria.\n "
-        "Some functions can be used via API, while others can only be used locally.",
+        default="created_at",
+        choices=[s for s in SORT_MAP],
+        help="set a sorting criteria.\n " "This is local sort.",
     )
     parser.add_argument(
         "--page", type=int, default=PAGE_DEFAULT, help="set a page number you need"
@@ -55,9 +54,9 @@ def parse_arguments() -> argparse.Namespace:
         help="set the number of articles you want to get from a page.",
     )
 
-    # 文字列を.nameとして扱い、メンバを呼び出す。
     args = parser.parse_args()
-    args.sort = SortOption[args.sort]
+
+    args.sort = parse_sort_option(args.sort)
 
     # 並び替えのパラメータはすべてSortOptionに束ね、クエリには含めない。
     if "sort:" in args.query:
@@ -89,9 +88,6 @@ def main():
         "page": args.page,
         "per_page": args.per_page,
     }
-    if args.sort.value[1]:
-        params["sort"] = args.sort.value[0]
-        params["order"] = "desc"
 
     qitta_client = QiitaClient(url=URL)
 

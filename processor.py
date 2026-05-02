@@ -1,5 +1,6 @@
 # filter and sort logic
-from config import SortOption
+from enum import Enum
+from datetime import datetime
 
 
 def normalize(item: dict) -> dict:
@@ -22,18 +23,62 @@ def normalize(item: dict) -> dict:
             #   {"name": "FastAPI"},
             # ]
             "tags": [tag["name"] for tag in item["tags"]],
-            "tag_count": len(item["title"]),
+            "tag_count": len(item["tags"]),
             "likes": item["likes_count"],
+            "stocks": item["stocks_count"],
         }
     except KeyError as ex:
         raise ValueError(f"Invalid item structure: missing {ex}")
 
 
-def sort_data(data: list, args_sort: SortOption) -> list:
-    # argsは、mainのほうで.sortを付与している。
+class SortOption(Enum):
+    # lambda式のxに渡されるのは、正規化後の各記事のメタデータ（辞書型）
+    # (sort_key, revrese)
+    # lambdaは拡張時に問題となりうる。外部に関数を作り、それで代用するように修正。
+    CREATED_AT = (
+        lambda x: datetime.fromisoformat(x["created_at"]),
+        True,
+    )
+    UPDATED_AT = (lambda x: datetime.fromisoformat(x["updated_at"]), True)
+    LIKES = (lambda x: x["likes"], True)
+    STOCKS = (lambda x: x["stocks"], True)
+    TITEL_LENGTH = (lambda x: x["title_length"], True)
+    TAG_COUNT = (lambda x: x["tag_count"], True)
 
-    # is_api_supportedがTrueの場合、すでに並び替え済み。
-    if not args_sort.value[1]:
-        return sorted(data, key=lambda item: item[args_sort.value[0]], reverse=True)
+    def __init__(self, sort_key, reverse: bool):
+        self.__sort_key = sort_key
+        self.__reverse = reverse
 
-    return data
+    @property
+    def sort_key(self):
+        return self.__sort_key
+
+    @property
+    def reverse(self):
+        return self.__reverse
+
+
+SORT_MAP = {
+    "created_at": SortOption.CREATED_AT,
+    "created": SortOption.CREATED_AT,
+    "updated_at": SortOption.UPDATED_AT,
+    "updated": SortOption.UPDATED_AT,
+    "likes": SortOption.LIKES,
+    "stocks": SortOption.STOCKS,
+    "title_length": SortOption.TITEL_LENGTH,
+    "tag_count": SortOption.TAG_COUNT,
+}
+
+
+# 開発者メモ: except節の構造がよくわかっていない
+def parse_sort_option(sort_key: str) -> SortOption:
+    try:
+        return SORT_MAP[sort_key]
+    except KeyError as ex:
+        raise ValueError(
+            f"Invalid sort option: {sort_key}. Available: {list(SORT_MAP)}"
+        ) from ex
+
+
+def sort_data(data: list, sort_key: SortOption) -> list:
+    return sorted(data, key=sort_key.sort_key, reverse=sort_key.reverse)
