@@ -2,11 +2,12 @@
 
 import argparse
 
-from fetcher import fetcher
+from fetcher import FetchClientAbstract, QiitaClient
 from processor import normalize, sort_data
 from output import output
 
 from config import (
+    URL,
     TAG_DEFAULT,
     KEYWORD_DEFAULT,
     QUERY_DEFAULT,
@@ -69,7 +70,8 @@ def build_query(args: argparse.Namespace) -> str:
     parts = []
 
     parts.append(args.keyword)
-    parts.append(f"tag:{args.tag}")
+    # sortの設計に問題があったため、API動作確認のため、一時的にstock:>20を追加。
+    parts.append(f"tag:{args.tag} stocks:>20")
     parts.append(args.query)
 
     # クエリパラメーターはスペース区切りの文字列。
@@ -91,10 +93,12 @@ def main():
         params["sort"] = args.sort.value[0]
         params["order"] = "desc"
 
-    json = fetcher(params)
+    qitta_client = QiitaClient(url=URL)
+
+    articles = qitta_client.fetch(params)
 
     # normalizeは一つずつの記事を処理
-    data = [normalize(item) for item in json]
+    data = [normalize(item) for item in articles]
 
     sorted_data = sort_data(data, args.sort)
 
