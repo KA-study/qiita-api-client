@@ -1,23 +1,25 @@
 from datetime import datetime
 import json
 
+from data_storage.scheme import ActivityData
 
-def load_data() -> dict:
+
+def load_data() -> ActivityData:
     try:
         with open("data_storage/qiita_history.json", "r", encoding="utf-8") as file:
             user_data = json.load(file)
         return user_data
     except FileNotFoundError:
-        return {}
+        return {}  # type: ignore[return-value]
 
 
-def save_data(user_data: dict) -> None:
+def save_data(user_data: ActivityData) -> None:
 
     with open("data_storage/qiita_history.json", "w", encoding="utf-8") as file:
         json.dump(user_data, file, ensure_ascii=False, indent=2)
 
 
-def manage_params(params: tuple, data: dict, now: str) -> dict:
+def manage_params(params: tuple, data: ActivityData, now: str) -> ActivityData:
     key, value = params
 
     if value is None or value == "":

@@ -23,6 +23,22 @@ python main.py --tag python --sort likes --keyword scraping
 - processor.py: フィルタ・ソートなどデータ処理を行う。
 - output.py: CSV/JSON形式で出力する。
 
+## 活動データ構造(JSON)
+```json
+{
+    "tags": {
+        "count": int
+        "last_used": str #datetime.now.isoformat()
+    }
+    "keywords": {
+        #same
+    }
+    "sort_options": {
+        #same
+    }
+}
+```
+
 ## このプログラムにおける言葉の定義
 - メタ情報/メタデータ：　タイトル、URL、投稿日時、更新日時、著者情報、タグ、ストック数、文字数
 
