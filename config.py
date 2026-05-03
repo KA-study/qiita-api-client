@@ -1,6 +1,6 @@
 URL = "https://qiita.com/api/v2/items"
 
-TAG_DEFAULT = "python"
+TAG_DEFAULT = ""
 KEYWORD_DEFAULT = ""
 STOCKS_DEFAULT = "20"
 QUERY_DEFAULT = ""

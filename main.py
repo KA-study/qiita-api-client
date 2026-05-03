@@ -2,7 +2,7 @@
 
 import argparse
 
-from fetcher import QiitaClient, fetch_pagenator
+from fetcher import fetch_pagenator
 from processor import normalize, sort_data
 from output import output
 
