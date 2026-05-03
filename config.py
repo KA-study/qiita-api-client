@@ -2,7 +2,7 @@ URL = "https://qiita.com/api/v2/items"
 
 TAG_DEFAULT = "python"
 KEYWORD_DEFAULT = ""
+STOCKS_DEFAULT = "20"
 QUERY_DEFAULT = ""
 SORT_DEFAULT = "created_at"
-PAGE_DEFAULT = 1
-PER_PAGE_DEFAULT = 10
+NUMBER_OF_ARTICLES_DEFAULT = 10  # Qiita　APIでは最大100と決められている

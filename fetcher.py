@@ -41,3 +41,33 @@ class QiitaClient(FetchClientAbstract):
             raise RuntimeError(f"HTTP error: {ex}")
         except ValueError:
             raise RuntimeError("Invalid JSON response")
+
+
+def fetch_pagenator(params: dict, url: str) -> list[dict]:
+    qiita_client = QiitaClient(url=url)
+    local_params = params.copy()
+    reserve_num = local_params["per_page"]
+
+    count = 1
+    articles = []
+
+    while reserve_num >= 100:
+        local_params["page"] = count
+        local_params["per_page"] = 100
+
+        fetched = qiita_client.fetch(local_params)
+        articles += fetched
+
+        if len(fetched) < 100:
+            print("Warning: Not enough articles were found.")
+            return articles
+
+        reserve_num -= 100
+        count += 1
+
+    if reserve_num > 0:
+        local_params["page"] = count
+        local_params["per_page"] = reserve_num
+        articles += qiita_client.fetch(local_params)
+
+    return articles

@@ -2,17 +2,17 @@
 
 import argparse
 
-from fetcher import QiitaClient
+from fetcher import QiitaClient, fetch_pagenator
 from processor import normalize, sort_data
 from output import output
 
 from config import (
     URL,
     TAG_DEFAULT,
+    STOCKS_DEFAULT,
     KEYWORD_DEFAULT,
     QUERY_DEFAULT,
-    PER_PAGE_DEFAULT,
-    PAGE_DEFAULT,
+    NUMBER_OF_ARTICLES_DEFAULT,
 )
 from processor import parse_sort_option, SORT_MAP
 
@@ -30,6 +30,11 @@ def parse_arguments() -> argparse.Namespace:
         help="set a tag relate to what you are interested in.",
     )
     parser.add_argument(
+        "--stocks",
+        default=STOCKS_DEFAULT,
+        help="set a smallest number of stocks you want to get articles.",
+    )
+    parser.add_argument(
         "--query",
         default=QUERY_DEFAULT,
         help="""set strings in query format.
@@ -45,12 +50,9 @@ def parse_arguments() -> argparse.Namespace:
         help="set a sorting criteria.\n " "This is local sort.",
     )
     parser.add_argument(
-        "--page", type=int, default=PAGE_DEFAULT, help="set a page number you need"
-    )
-    parser.add_argument(
-        "--per_page",
+        "--number_of_articles",
         type=int,
-        default=PER_PAGE_DEFAULT,
+        default=NUMBER_OF_ARTICLES_DEFAULT,
         help="set the number of articles you want to get from a page.",
     )
 
@@ -70,7 +72,8 @@ def build_query(args: argparse.Namespace) -> str:
 
     parts.append(args.keyword)
     # sortの設計に問題があったため、API動作確認のため、一時的にstock:>20を追加。
-    parts.append(f"tag:{args.tag} stocks:>20")
+    parts.append(f"tag:{args.tag}")
+    parts.append(f"stocks:>{args.stocks}")
     parts.append(args.query)
 
     # クエリパラメーターはスペース区切りの文字列。
@@ -79,19 +82,17 @@ def build_query(args: argparse.Namespace) -> str:
 
 def main():
     # CLI入力 → クエリ構築 → API取得 → 正規化 → 出力
-    args = parse_arguments()
+    args = parse_arguments()  # parse_argsではない。ユーザー定義関数。
 
     query = build_query(args)
 
     params = {
         "query": query,
-        "page": args.page,
-        "per_page": args.per_page,
+        "page": ...,
+        "per_page": args.number_of_articles,
     }
 
-    qitta_client = QiitaClient(url=URL)
-
-    articles = qitta_client.fetch(params)
+    articles = fetch_pagenator(params, url=URL)
 
     # normalizeは一つずつの記事を処理
     data = [normalize(item) for item in articles]
