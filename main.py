@@ -14,7 +14,7 @@ from config import (
     QUERY_DEFAULT,
     NUMBER_OF_ARTICLES_DEFAULT,
 )
-from processor import SortOption, SORT_MAP
+from processor import SORT_MAP
 from storage import update_data
 
 
@@ -99,7 +99,15 @@ def main():
     # normalizeは一つずつの記事を処理
     data = [normalize(item) for item in articles]
 
-    sorted_data = sort_data(data, args.sort)
+    # json logファイル操作
+    logs = update_data(
+        # args.sortはSortOption型、args.sort.sort_keyはstr型
+        tag=args.tag,
+        keyword=args.keyword,
+        sort=args.sort.sort_key,
+    )
+
+    sorted_data = sort_data(logs, data, args.sort)
 
     output(sorted_data)
 

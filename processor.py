@@ -87,4 +87,10 @@ def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
             data, key=sort_logic, reverse=True
         )  # reverseのことはおいおい考える
     else:
-        ...
+        calc_article_score = calc_score_closure()
+
+        return sorted(
+            data,
+            key=lambda x: calc_article_score(logs, x, sort_key.sort_key),
+            reverse=True,  # reverseは後ほど改善すること。
+        )
