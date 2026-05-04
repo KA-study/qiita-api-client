@@ -2,6 +2,9 @@
 from enum import Enum
 from datetime import datetime
 
+from data_storage.scheme import ActivityData
+from score import calc_score_closure
+
 
 def normalize(item: dict) -> dict:
     # Qiita API response を内部で扱う共通フォーマットに整形
@@ -35,27 +38,21 @@ class SortOption(Enum):
     # lambda式のxに渡されるのは、正規化後の各記事のメタデータ（辞書型）
     # (sort_key, revrese)
     # lambdaは拡張時に問題となりうる。外部に関数を作り、それで代用するように修正。
-    CREATED_AT = (
-        lambda x: datetime.fromisoformat(x["created_at"]),
-        True,
-    )
-    UPDATED_AT = (lambda x: datetime.fromisoformat(x["updated_at"]), True)
-    LIKES = (lambda x: x["likes"], True)
-    STOCKS = (lambda x: x["stocks"], True)
-    TITEL_LENGTH = (lambda x: x["title_length"], True)
-    TAG_COUNT = (lambda x: x["tag_count"], True)
+    CREATED_AT = "created_at"
+    UPDATED_AT = "updated_at"
+    LIKES = "likes"
+    STOCKS = "stocks"
+    TITEL_LENGTH = "title_length"
+    TAG_COUNT = "tag_count"
 
-    def __init__(self, sort_key, reverse: bool):
+    ORIGINAL = "original"
+
+    def __init__(self, sort_key):
         self.__sort_key = sort_key
-        self.__reverse = reverse
 
     @property
     def sort_key(self):
         return self.__sort_key
-
-    @property
-    def reverse(self):
-        return self.__reverse
 
 
 SORT_MAP = {
@@ -67,18 +64,27 @@ SORT_MAP = {
     "stocks": SortOption.STOCKS,
     "title_length": SortOption.TITEL_LENGTH,
     "tag_count": SortOption.TAG_COUNT,
+    "original": SortOption.ORIGINAL,
+}
+
+SORT_LOGIC = {
+    # dataの要素がｘである。すなわち、各記事の辞書がｘである。
+    SortOption.CREATED_AT: lambda x: datetime.fromisoformat(x["created_at"]),
+    SortOption.UPDATED_AT: lambda x: datetime.fromisoformat(x["updated_at"]),
+    SortOption.LIKES: lambda x: x["likes"],
+    SortOption.STOCKS: lambda x: x["stocks"],
+    SortOption.TITEL_LENGTH: lambda x: x["title_length"],
+    SortOption.TAG_COUNT: lambda x: x["tag_count"],
 }
 
 
-# 開発者メモ: except節の構造がよくわかっていない
-def parse_sort_option(sort_key: str) -> SortOption:
-    try:
-        return SORT_MAP[sort_key]
-    except KeyError as ex:
-        raise ValueError(
-            f"Invalid sort option: {sort_key}. Available: {list(SORT_MAP)}"
-        ) from ex
+def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
 
-
-def sort_data(data: list, sort_key: SortOption) -> list:
-    return sorted(data, key=sort_key.sort_key, reverse=sort_key.reverse)
+    if sort_key is not SortOption.ORIGINAL:
+        sort_logic = SORT_LOGIC[sort_key]
+        # key=sortkey の sort_keyはSORT_MAPのいずれかのvalue、つまり文字列。
+        return sorted(
+            data, key=sort_logic, reverse=True
+        )  # reverseのことはおいおい考える
+    else:
+        ...

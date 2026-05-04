@@ -14,7 +14,8 @@ from config import (
     QUERY_DEFAULT,
     NUMBER_OF_ARTICLES_DEFAULT,
 )
-from processor import parse_sort_option, SORT_MAP
+from processor import SortOption, SORT_MAP
+from storage import update_data
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -46,7 +47,7 @@ def parse_arguments() -> argparse.Namespace:
         # choicesを決めておくことで、誤った入力があった時に正常終了し、ただし選択肢をユーザーに伝える。
         "--sort",
         default="created_at",
-        choices=[s for s in SORT_MAP],
+        choices=[s for s in SORT_MAP],  # keyのみ反復
         help="set a sorting criteria.\n " "This is local sort.",
     )
     parser.add_argument(
@@ -58,7 +59,8 @@ def parse_arguments() -> argparse.Namespace:
 
     args = parser.parse_args()
 
-    args.sort = parse_sort_option(args.sort)
+    # sort_keyを文字列からSortOption型オブジェクトに変換
+    args.sort = SORT_MAP[args.sort]
 
     # 並び替えのパラメータはすべてSortOptionに束ね、クエリには含めない。
     if "sort:" in args.query:
