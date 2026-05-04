@@ -37,7 +37,7 @@ def manage_params(params: tuple, data: ActivityData, now: str) -> ActivityData:
     return data
 
 
-def update_date(tag: str, keyword: str, sort: str) -> None:
+def update_data(tag: str, keyword: str, sort: str) -> ActivityData:
     data = load_data()
 
     now = datetime.now().isoformat()
@@ -47,3 +47,5 @@ def update_date(tag: str, keyword: str, sort: str) -> None:
     data = manage_params(("sort_options", sort), data, now)
 
     save_data(data)
+
+    return data

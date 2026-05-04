@@ -27,12 +27,15 @@ python main.py --tag python --sort likes --keyword scraping
 ```json
 {
     "tags": {
-        "count": int
-        "last_used": str #datetime.now.isoformat()
-    }
+        "Python": {
+            "count": int
+            "last_used": str #datetime.now.isoformat()
+        },
+        ...
+    },
     "keywords": {
         #same
-    }
+    },
     "sort_options": {
         #same
     }
