@@ -1,22 +1,17 @@
 import math
 from datetime import datetime
+import re
 
 from data_storage.scheme import ActivityData, ActivityMap, ActivityItem
-from config import TAU, SECONDS_PER_DAY
+from config import TAU, SECONDS_PER_DAY 
 
-def calc_tag_score(tags_logs: ActivityMap, tags: list[str]) -> float:
+def calc_tag_score(tags_logs: ActivityMap, tags: list[str], now: datetime) -> float:
     #記事に一つもtagが付されていないとき
     #本当に0.0を返してよいのか。後ほど要検討
     if not tags:
         return 0.0
 
-    #tags_logsが空だった（一度もtag指定で検索したことがない）とき
-    all_count: int = sum(tags_logs[tag_name]["count"] for tag_name in tags_logs)
-    if not all_count:
-        return 0.0
-
     score_list = []
-    now = datetime.now()
 
     for tag in tags:
 
@@ -33,7 +28,8 @@ def calc_tag_score(tags_logs: ActivityMap, tags: list[str]) -> float:
 
         elapsed_day = (now - last_used).total_seconds() / SECONDS_PER_DAY
         
-        score_list.append((count/all_count)*math.exp(-elapsed_day/TAU)) 
+        #この部分の計算メソッドは、countの大きさに大きく依存するため、必要に応じて緩衝するようにメソッドを変更する。
+        score_list.append(math.log(count)*math.exp(-elapsed_day/TAU)) 
 
     #記事にtagが付されていて、かつtags_logsもからでないが、tags_logsにあてはまるtagが一つもなかった時。
     if not score_list:
@@ -42,7 +38,45 @@ def calc_tag_score(tags_logs: ActivityMap, tags: list[str]) -> float:
     #スコアリングで、最大値以外すべて無視している。後ほど要再設計。
     return max(score_list) 
 
-def calc_keyword_score() -> int:
+def calc_keyword_score(keywords_logs: ActivityMap, tags: list[str], title: str, now:datetime) -> float:
+    tokens = [[], []]
+    IN_TITLE = 0
+    IN_TAGS = 1
+
+    if not keywords_logs:
+        return 0.0
+
+    #辞書を回すとkeyが取り出される
+    #titleはstrだから部分一致、tagはリストだから完全一致。これで良し。
+    for token in keywords_logs:
+        if re.search(rf"\b{re.escape(token)}\b", title): #searchメソッドがマッチしなかったときNoneを返すことを利用する
+            tokens[IN_TITLE].append(token)
+        if token in tags:
+            tokens[IN_TAGS].append(token)
+
+    score_list = [[], []] 
+
+    for idx, tokens_half in enumerate(tokens):
+
+        for token in tokens_half:
+            
+            param = keywords_logs[token]
+
+            last_used = datetime.fromisoformat(param["last_used"])
+            elapsed_day = (now - last_used).total_seconds() / SECONDS_PER_DAY
+
+            freq = math.log(1+param["count"])
+            recency = math.exp(-elapsed_day/TAU)
+
+            score_list[idx].append(freq * recency)
+
+    #最大値以外を無視する処理。後ほど要再設計。
+    title_score = max(score_list[IN_TITLE]) if score_list[IN_TITLE] else 0.0
+    tag_score = max(score_list[IN_TAGS]) if score_list[IN_TAGS] else 0.0
+
+    return title_score * 0.7 + tag_score * 0.3
+
+                
 
 def calc_sort_score() -> int:
 
