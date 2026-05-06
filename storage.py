@@ -44,7 +44,7 @@ def tokenize(keyword: str) -> list[str]:
 
     tokens = ptn.findall(keyword)
 
-    tokens = [t for t in tokens if t not in STOPWORDS and len(t) > 1]
+    tokens = [t() for t in tokens if t not in STOPWORDS and len(t) > 1]
 
     return tokens
 
@@ -52,12 +52,16 @@ def tokenize(keyword: str) -> list[str]:
 def update_data(tag: str, keyword: str, sort: str) -> ActivityData:
     data = load_data()
 
+    # 保存時はすべて小文字に。破壊的変更を避ける。この関数に他の変数の値を変える責務はない。
+    normalized_tag = tag.lower()
+    normalized_keyword = keyword.lower()
+
     now = datetime.now().isoformat()
 
-    data = manage_params(("tags", tag), data, now)
+    data = manage_params(("tags", normalized_tag), data, now)
     data = manage_params(("sort_options", sort), data, now)
 
-    tokens = tokenize(keyword)
+    tokens = tokenize(normalized_keyword)
 
     for token in tokens:
         data = manage_params(("keywords", token), data, now)

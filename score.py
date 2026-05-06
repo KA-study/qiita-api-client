@@ -49,13 +49,20 @@ def calc_sort_score() -> int:
 def calc_score_closure():
     cache = {}
 
+    #logsデータは小文字化済み。残りのデータも小文字化すること。
     def calc_article_score(
             logs: ActivityData, article:dict, sort: str
             ) -> float:
+
+        now = datetime.now()
+
+        #元データを破壊しないように注意
+        normalized_tags = [tag.lower() for tag in article["tags"]]
+        normalized_title = article["title"].lower()
         
         return (
-            calc_tag_score(logs["tags"], article["tags"]) +
-            calc_keyword_score() +
+            calc_tag_score(logs["tags"], normalized_tags, now) +
+            calc_keyword_score(logs["keywords"], normalized_tags, normalized_title, now) +
             calc_sort_score()
         )
 
