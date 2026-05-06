@@ -1,7 +1,9 @@
 from datetime import datetime
 import json
+import re
 
 from data_storage.scheme import ActivityData
+from config import STOPWORDS
 
 
 def load_data() -> ActivityData:
@@ -37,14 +39,28 @@ def manage_params(params: tuple, data: ActivityData, now: str) -> ActivityData:
     return data
 
 
+def tokenize(keyword: str) -> list[str]:
+    ptn = re.compile(r"[a-zA-Z0-9]+|[ァ-ンー]+|[一-龥]+|[ぁ-ん]+")
+
+    tokens = ptn.findall(keyword)
+
+    tokens = [t for t in tokens if t not in STOPWORDS and len(t) > 1]
+
+    return tokens
+
+
 def update_data(tag: str, keyword: str, sort: str) -> ActivityData:
     data = load_data()
 
     now = datetime.now().isoformat()
 
     data = manage_params(("tags", tag), data, now)
-    data = manage_params(("keywords", keyword), data, now)
     data = manage_params(("sort_options", sort), data, now)
+
+    tokens = tokenize(keyword)
+
+    for token in tokens:
+        data = manage_params(("keywords", token), data, now)
 
     save_data(data)
 
