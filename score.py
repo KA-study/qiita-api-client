@@ -89,28 +89,70 @@ def calc_keyword_score(
 
     return title_score * 0.7 + tag_score * 0.3
 
-                
 
-def calc_sort_score() -> int:
+# 後ほどこれらのsortをすべてSortOption型に置き換える。また、それが可能なように、storage.pyで、取り出したlog dataのsortをSortOption型に変更する。
+def article_sort_value(
+    article: dict,
+    sort_option: str,
+    now: datetime,
+) -> float:
 
-def calc_score_closure():
-    cache = {}
+    match sort_option:
+        case "likes" | "stocks" | "title_length" | "tag_count" as option:
+            return article[option]
 
-    #logsデータは小文字化済み。残りのデータも小文字化すること。
-    def calc_article_score(
-            logs: ActivityData, article:dict, sort: str
-            ) -> float:
+        case "created_at" | "updated_at" as option:
+            date = datetime.fromisoformat(article[option])
 
-        now = datetime.now()
+            elapsed_day = (now - date).total_seconds() / SECONDS_PER_DAY
 
-        #元データを破壊しないように注意
-        normalized_tags = [tag.lower() for tag in article["tags"]]
-        normalized_title = article["title"].lower()
-        
-        return (
-            calc_tag_score(logs["tags"], normalized_tags, now) +
-            calc_keyword_score(logs["keywords"], normalized_tags, normalized_title, now) +
-            calc_sort_score()
+            return math.exp(-elapsed_day / TAU)
+
+    return 0.0
+
+
+def calc_sort_score(sort_options: ActivityMap, article: dict, now: datetime) -> float:
+    score_dict = {}
+
+    # sort_option は、"created_at"など。
+    for (
+        sort_option,
+        value,
+    ) in sort_options.items():  # sort_option = (key, (count, last_used))
+
+        if not value["last_used"]:
+            continue
+
+        last_used = datetime.fromisoformat(value["last_used"])
+        elapsed_day = (now - last_used).total_seconds() / SECONDS_PER_DAY
+
+        recency = math.exp(-elapsed_day / TAU)
+        freq = math.log(1 + value["count"])
+
+        user_weight = recency * freq
+
+        article_value = article_sort_value(
+            article,
+            sort_option,
+            now,
         )
 
-    return calc_article_score
+        score_dict[sort_option] = user_weight * article_value
+
+    # 本来ここの処理はもっと複雑な、評価力のある処理であるべきだが、いったん簡略化しておく。後ほど要再設計。
+    return sum(score_dict.values()) / len(score_dict)
+
+
+# logsデータは小文字化済み。残りのデータも小文字化すること。
+# sortはSortOption.sort_key、つまり"created_at"など。
+def calc_article_score(logs: ActivityData, article: dict, now: datetime) -> float:
+
+    # 元データを破壊しないように注意
+    normalized_tags = [tag.lower() for tag in article["tags"]]
+    normalized_title = article["title"].lower()
+
+    return (
+        calc_tag_score(logs["tags"], normalized_tags, now)
+        + calc_keyword_score(logs["keywords"], normalized_tags, normalized_title, now)
+        + calc_sort_score(logs["sort_options"], article, now)
+    )

@@ -88,6 +88,6 @@ def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
     else:
         return sorted(
             data,
-            key=lambda x: calc_article_score(logs, x, sort_key.sort_key, now),
+            key=lambda x: calc_article_score(logs, x, now),
             reverse=True,  # reverseは後ほど改善すること。
         )
