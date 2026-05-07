@@ -3,7 +3,7 @@ from enum import Enum
 from datetime import datetime
 
 from data_storage.scheme import ActivityData
-from score import calc_score_closure
+from score import calc_article_score
 
 
 def normalize(item: dict) -> dict:
@@ -35,9 +35,6 @@ def normalize(item: dict) -> dict:
 
 
 class SortOption(Enum):
-    # lambda式のxに渡されるのは、正規化後の各記事のメタデータ（辞書型）
-    # (sort_key, revrese)
-    # lambdaは拡張時に問題となりうる。外部に関数を作り、それで代用するように修正。
     CREATED_AT = "created_at"
     UPDATED_AT = "updated_at"
     LIKES = "likes"
@@ -80,6 +77,8 @@ SORT_LOGIC = {
 
 def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
 
+    now = datetime.now()
+
     if sort_key is not SortOption.ORIGINAL:
         sort_logic = SORT_LOGIC[sort_key]
         # key=sortkey の sort_keyはSORT_MAPのいずれかのvalue、つまり文字列。
@@ -87,10 +86,8 @@ def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
             data, key=sort_logic, reverse=True
         )  # reverseのことはおいおい考える
     else:
-        calc_article_score = calc_score_closure()
-
         return sorted(
             data,
-            key=lambda x: calc_article_score(logs, x, sort_key.sort_key),
+            key=lambda x: calc_article_score(logs, x, sort_key.sort_key, now),
             reverse=True,  # reverseは後ほど改善すること。
         )

@@ -49,6 +49,7 @@ def tokenize(keyword: str) -> list[str]:
     return tokens
 
 
+# sort: SortOption.sort_key ("created_at"とか。)
 def update_data(tag: str, keyword: str, sort: str) -> ActivityData:
     data = load_data()
 

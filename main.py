@@ -104,7 +104,7 @@ def main():
         # args.sortはSortOption型、args.sort.sort_keyはstr型
         tag=args.tag,
         keyword=args.keyword,
-        sort=args.sort.sort_key,
+        sort=args.sort.sort_key,  # args.sortはSortOption型
     )
 
     sorted_data = sort_data(logs, data, args.sort)
