@@ -39,17 +39,10 @@ class SortOption(Enum):
     UPDATED_AT = "updated_at"
     LIKES = "likes"
     STOCKS = "stocks"
-    TITEL_LENGTH = "title_length"
+    TITLE_LENGTH = "title_length"
     TAG_COUNT = "tag_count"
 
     ORIGINAL = "original"
-
-    def __init__(self, sort_key):
-        self.__sort_key = sort_key
-
-    @property
-    def sort_key(self):
-        return self.__sort_key
 
 
 SORT_MAP = {
@@ -59,7 +52,7 @@ SORT_MAP = {
     "updated": SortOption.UPDATED_AT,
     "likes": SortOption.LIKES,
     "stocks": SortOption.STOCKS,
-    "title_length": SortOption.TITEL_LENGTH,
+    "title_length": SortOption.TITLE_LENGTH,
     "tag_count": SortOption.TAG_COUNT,
     "original": SortOption.ORIGINAL,
 }
@@ -70,7 +63,7 @@ SORT_LOGIC = {
     SortOption.UPDATED_AT: lambda x: datetime.fromisoformat(x["updated_at"]),
     SortOption.LIKES: lambda x: x["likes"],
     SortOption.STOCKS: lambda x: x["stocks"],
-    SortOption.TITEL_LENGTH: lambda x: x["title_length"],
+    SortOption.TITLE_LENGTH: lambda x: x["title_length"],
     SortOption.TAG_COUNT: lambda x: x["tag_count"],
 }
 

@@ -2,7 +2,8 @@ import math
 from datetime import datetime
 import re
 
-from data_storage.scheme import ActivityData, ActivityMap
+from data_storage.scheme import ActivityData, ActivityMap, ActivityMapSort
+from processor import SortOption
 from config import TAU, SECONDS_PER_DAY
 
 
@@ -93,16 +94,21 @@ def calc_keyword_score(
 # 後ほどこれらのsortをすべてSortOption型に置き換える。また、それが可能なように、storage.pyで、取り出したlog dataのsortをSortOption型に変更する。
 def article_sort_value(
     article: dict,
-    sort_option: str,
+    sort_option: SortOption,
     now: datetime,
 ) -> float:
 
     match sort_option:
-        case "likes" | "stocks" | "title_length" | "tag_count" as option:
-            return article[option]
+        case (
+            SortOption.LIKES
+            | SortOption.STOCKS
+            | SortOption.TITLE_LENGTH
+            | SortOption.TAG_COUNT as option
+        ):
+            return article[option.value]
 
-        case "created_at" | "updated_at" as option:
-            date = datetime.fromisoformat(article[option])
+        case SortOption.CREATED_AT | SortOption.UPDATED_AT as option:
+            date = datetime.fromisoformat(article[option.value])
 
             elapsed_day = (now - date).total_seconds() / SECONDS_PER_DAY
 
@@ -111,14 +117,17 @@ def article_sort_value(
     return 0.0
 
 
-def calc_sort_score(sort_options: ActivityMap, article: dict, now: datetime) -> float:
+def calc_sort_score(
+    sort_options: ActivityMapSort, article: dict, now: datetime
+) -> float:
+
     score_dict = {}
 
-    # sort_option は、"created_at"など。
+    # sort_options は、 {SortOption, ActivityItem}、SortOptionは例えば、SortOption.CREATED_ATなど。
     for (
-        sort_option,
-        value,
-    ) in sort_options.items():  # sort_option = (key, (count, last_used))
+        sort_option,  # SortOption
+        value,  # ActivityItem
+    ) in sort_options.items():
 
         if not value["last_used"]:
             continue
@@ -138,6 +147,9 @@ def calc_sort_score(sort_options: ActivityMap, article: dict, now: datetime) -> 
         )
 
         score_dict[sort_option] = user_weight * article_value
+
+    if not score_dict:
+        return 0.0
 
     # 本来ここの処理はもっと複雑な、評価力のある処理であるべきだが、いったん簡略化しておく。後ほど要再設計。
     return sum(score_dict.values()) / len(score_dict)

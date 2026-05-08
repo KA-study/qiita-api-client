@@ -2,26 +2,56 @@ from datetime import datetime
 import json
 import re
 
-from data_storage.scheme import ActivityData
+from data_storage.scheme import (
+    ActivityData,
+    ActivityMapSort,
+    ActivityItem,
+    SerializedActivityData,
+)
 from config import STOPWORDS
+from processor import SortOption, SORT_MAP
+
+
+def normalize_sort_options(sort_options: dict[str, ActivityItem]) -> ActivityMapSort:
+
+    return {SORT_MAP[sort_option]: value for sort_option, value in sort_options.items()}
+
+
+def serialize_sort_options(sort_options: ActivityMapSort) -> dict[str, ActivityItem]:
+
+    return {sort_option.value: value for sort_option, value in sort_options.items()}
 
 
 def load_data() -> ActivityData:
     try:
         with open("data_storage/qiita_history.json", "r", encoding="utf-8") as file:
             user_data = json.load(file)
-        return user_data
+
+            user_data["sort_options"] = normalize_sort_options(
+                user_data["sort_options"]
+            )
+
+            return user_data
+
     except FileNotFoundError:
         return {}  # type: ignore[return-value]
 
 
 def save_data(user_data: ActivityData) -> None:
 
+    user_data_serialized: SerializedActivityData = {
+        "tags": user_data["tags"],
+        "keywords": user_data["keywords"],
+        "sort_options": serialize_sort_options(user_data["sort_options"]),
+    }
+
     with open("data_storage/qiita_history.json", "w", encoding="utf-8") as file:
-        json.dump(user_data, file, ensure_ascii=False, indent=2)
+        json.dump(user_data_serialized, file, ensure_ascii=False, indent=2)
 
 
-def manage_params(params: tuple, data: ActivityData, now: str) -> ActivityData:
+def manage_params(
+    params: tuple[str, str | SortOption], data: ActivityData, now: str
+) -> ActivityData:
     key, value = params
 
     if value is None or value == "":
@@ -44,13 +74,13 @@ def tokenize(keyword: str) -> list[str]:
 
     tokens = ptn.findall(keyword)
 
-    tokens = [t() for t in tokens if t not in STOPWORDS and len(t) > 1]
+    tokens = [t.lower() for t in tokens if t not in STOPWORDS and len(t) > 1]
 
     return tokens
 
 
 # sort: SortOption.sort_key ("created_at"とか。)
-def update_data(tag: str, keyword: str, sort: str) -> ActivityData:
+def update_data(tag: str, keyword: str, sort: SortOption) -> ActivityData:
     data = load_data()
 
     # 保存時はすべて小文字に。破壊的変更を避ける。この関数に他の変数の値を変える責務はない。
