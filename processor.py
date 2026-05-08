@@ -1,12 +1,11 @@
 # filter and sort logic
-from enum import Enum
 from datetime import datetime
 
-from data_storage.scheme import ActivityData
+from data_storage.scheme import ActivityData, SortOption, ArticleData
 from score import calc_article_score
 
 
-def normalize(item: dict) -> dict:
+def normalize(item: dict) -> ArticleData:
     # Qiita API response を内部で扱う共通フォーマットに整形
     try:
         return {
@@ -34,29 +33,6 @@ def normalize(item: dict) -> dict:
         raise ValueError(f"Invalid item structure: missing {ex}")
 
 
-class SortOption(Enum):
-    CREATED_AT = "created_at"
-    UPDATED_AT = "updated_at"
-    LIKES = "likes"
-    STOCKS = "stocks"
-    TITLE_LENGTH = "title_length"
-    TAG_COUNT = "tag_count"
-
-    ORIGINAL = "original"
-
-
-SORT_MAP = {
-    "created_at": SortOption.CREATED_AT,
-    "created": SortOption.CREATED_AT,
-    "updated_at": SortOption.UPDATED_AT,
-    "updated": SortOption.UPDATED_AT,
-    "likes": SortOption.LIKES,
-    "stocks": SortOption.STOCKS,
-    "title_length": SortOption.TITLE_LENGTH,
-    "tag_count": SortOption.TAG_COUNT,
-    "original": SortOption.ORIGINAL,
-}
-
 SORT_LOGIC = {
     # dataの要素がｘである。すなわち、各記事の辞書がｘである。
     SortOption.CREATED_AT: lambda x: datetime.fromisoformat(x["created_at"]),
@@ -68,7 +44,9 @@ SORT_LOGIC = {
 }
 
 
-def sort_data(logs: ActivityData, data: list, sort_key: SortOption) -> list:
+def sort_data(
+    logs: ActivityData, data: list[ArticleData], sort_key: SortOption
+) -> list:
 
     now = datetime.now()
 

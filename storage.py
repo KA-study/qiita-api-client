@@ -7,9 +7,10 @@ from data_storage.scheme import (
     ActivityMapSort,
     ActivityItem,
     SerializedActivityData,
+    SortOption,
+    SORT_MAP,
 )
 from config import STOPWORDS
-from processor import SortOption, SORT_MAP
 
 
 def normalize_sort_options(sort_options: dict[str, ActivityItem]) -> ActivityMapSort:

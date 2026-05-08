@@ -2,7 +2,7 @@ import math
 from datetime import datetime
 import re
 
-from data_storage.scheme import ActivityData, ActivityMap, ActivityMapSort
+from data_storage.scheme import ActivityData, ActivityMap, ActivityMapSort, ArticleData
 from processor import SortOption
 from config import TAU, SECONDS_PER_DAY
 
@@ -93,7 +93,7 @@ def calc_keyword_score(
 
 # 後ほどこれらのsortをすべてSortOption型に置き換える。また、それが可能なように、storage.pyで、取り出したlog dataのsortをSortOption型に変更する。
 def article_sort_value(
-    article: dict,
+    article: ArticleData,
     sort_option: SortOption,
     now: datetime,
 ) -> float:
@@ -118,7 +118,7 @@ def article_sort_value(
 
 
 def calc_sort_score(
-    sort_options: ActivityMapSort, article: dict, now: datetime
+    sort_options: ActivityMapSort, article: ArticleData, now: datetime
 ) -> float:
 
     score_dict = {}
@@ -157,7 +157,9 @@ def calc_sort_score(
 
 # logsデータは小文字化済み。残りのデータも小文字化すること。
 # sortはSortOption.sort_key、つまり"created_at"など。
-def calc_article_score(logs: ActivityData, article: dict, now: datetime) -> float:
+def calc_article_score(
+    logs: ActivityData, article: ArticleData, now: datetime
+) -> float:
 
     # 元データを破壊しないように注意
     normalized_tags = [tag.lower() for tag in article["tags"]]

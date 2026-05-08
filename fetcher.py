@@ -51,6 +51,7 @@ def fetch_pagenator(params: dict, url: str) -> list[dict]:
     count = 1
     articles = []
 
+    # magic number 100 を修正すること
     while reserve_num >= 100:
         local_params["page"] = count
         local_params["per_page"] = 100

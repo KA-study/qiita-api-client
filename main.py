@@ -14,7 +14,7 @@ from config import (
     QUERY_DEFAULT,
     NUMBER_OF_ARTICLES_DEFAULT,
 )
-from processor import SORT_MAP
+from data_storage.scheme import SORT_MAP, ArticleData
 from storage import update_data
 
 
@@ -97,7 +97,7 @@ def main():
     articles = fetch_pagenator(params, url=URL)
 
     # normalizeは一つずつの記事を処理
-    data = [normalize(item) for item in articles]
+    data: list[ArticleData] = [normalize(item) for item in articles]
 
     # json logファイル操作
     logs = update_data(
