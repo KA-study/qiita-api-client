@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from json import JSONDecodeError
 import re
 
 from data_storage.scheme import (
@@ -28,23 +29,35 @@ def load_data() -> ActivityData:
         with open("data_storage/qiita_history.json", "r", encoding="utf-8") as file:
             user_data = json.load(file)
 
+            # SortOption型にデータ変換
             user_data["sort_options"] = normalize_sort_options(
                 user_data["sort_options"]
             )
 
             return user_data
 
-    except FileNotFoundError:
+    except (FileNotFoundError, JSONDecodeError):
         return {}  # type: ignore[return-value]
 
 
 def save_data(user_data: ActivityData) -> None:
 
     user_data_serialized: SerializedActivityData = {
-        "tags": user_data["tags"],
-        "keywords": user_data["keywords"],
-        "sort_options": serialize_sort_options(user_data["sort_options"]),
+        "tags": {},
+        "keywords": {},
+        "sort_options": {},
     }
+
+    if user_data["tags"]:
+        user_data_serialized["tags"] = user_data["tags"]
+
+    if user_data["keywords"]:
+        user_data_serialized["keywords"] = user_data["keywords"]
+
+    if user_data["sort_options"]:
+        user_data_serialized["sort_options"] = serialize_sort_options(
+            user_data["sort_options"]
+        )
 
     with open("data_storage/qiita_history.json", "w", encoding="utf-8") as file:
         json.dump(user_data_serialized, file, ensure_ascii=False, indent=2)
@@ -55,11 +68,8 @@ def manage_params(
 ) -> ActivityData:
     key, value = params
 
-    if value is None or value == "":
+    if not value:
         return data
-
-    if key not in data:
-        data[key] = {}
 
     if value not in data[key]:
         data[key][value] = {"count": 0, "last_used": None}
@@ -89,6 +99,10 @@ def update_data(tag: str, keyword: str, sort: SortOption) -> ActivityData:
     normalized_keyword = keyword.lower()
 
     now = datetime.now().isoformat()
+
+    data.setdefault("tags", {})
+    data.setdefault("keywords", {})
+    data.setdefault("sort_options", {})
 
     data = manage_params(("tags", normalized_tag), data, now)
     data = manage_params(("sort_options", sort), data, now)
