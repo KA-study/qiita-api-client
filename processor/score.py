@@ -2,8 +2,8 @@ import math
 from datetime import datetime
 import re
 
-from data_storage.scheme import ActivityData, ActivityMap, ActivityMapSort, ArticleData
-from processor import SortOption
+from storage.scheme import ActivityData, ActivityMap, ActivityMapSort, ArticleData
+from processor.processor import SortOption
 from config import TAU, SECONDS_PER_DAY
 
 

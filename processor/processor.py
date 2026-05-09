@@ -1,8 +1,8 @@
 # filter and sort logic
 from datetime import datetime
 
-from data_storage.scheme import ActivityData, SortOption, ArticleData
-from score import calc_article_score
+from storage.scheme import ActivityData, SortOption, ArticleData
+from processor.score import calc_article_score
 
 
 def normalize(item: dict) -> ArticleData:

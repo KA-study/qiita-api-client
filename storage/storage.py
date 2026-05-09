@@ -3,7 +3,7 @@ import json
 from json import JSONDecodeError
 import re
 
-from data_storage.scheme import (
+from storage.scheme import (
     ActivityData,
     ActivityMapSort,
     ActivityItem,

@@ -2,9 +2,9 @@
 
 import argparse
 
-from fetcher import fetch_pagenator
-from processor import normalize, sort_data
-from output import output
+from fetch.fetcher import fetch_pagenator
+from processor.processor import normalize, sort_data
+from ouput.output import output
 
 from config import (
     URL,
@@ -14,8 +14,8 @@ from config import (
     QUERY_DEFAULT,
     NUMBER_OF_ARTICLES_DEFAULT,
 )
-from data_storage.scheme import SORT_MAP, ArticleData
-from storage import update_data
+from storage.scheme import SORT_MAP, ArticleData
+from storage.storage import update_data
 
 
 def parse_arguments() -> argparse.Namespace:
