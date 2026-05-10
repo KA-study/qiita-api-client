@@ -1,8 +1,10 @@
 # export csv/json
 from datetime import datetime
 
+from storage.scheme import ArticleData
 
-def format_item(item: dict, index: int) -> str:
+
+def format_item(item: ArticleData, index: int) -> str:
     if item.get("created_at"):
         return (
             f"[{index}] {item["title"]}\n"
@@ -23,7 +25,7 @@ def format_item(item: dict, index: int) -> str:
         raise ValueError(f"the created_at {item["title"]} is unclear")
 
 
-def output(data: list[dict]) -> None:
+def output(data: list[ArticleData]) -> None:
     print("\n=======result========\n")
 
     for i, item in enumerate(data, 1):

@@ -26,7 +26,7 @@ def serialize_sort_options(sort_options: ActivityMapSort) -> dict[str, ActivityI
 
 def load_data() -> ActivityData:
     try:
-        with open("data_storage/qiita_history.json", "r", encoding="utf-8") as file:
+        with open("data/qiita_history.json", "r", encoding="utf-8") as file:
             user_data = json.load(file)
 
             # SortOption型にデータ変換
@@ -59,7 +59,7 @@ def save_data(user_data: ActivityData) -> None:
             user_data["sort_options"]
         )
 
-    with open("data_storage/qiita_history.json", "w", encoding="utf-8") as file:
+    with open("storage/qiita_history.json", "w", encoding="utf-8") as file:
         json.dump(user_data_serialized, file, ensure_ascii=False, indent=2)
 
 
