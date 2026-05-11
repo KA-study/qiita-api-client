@@ -1,7 +1,7 @@
 import copy
 
 from storage.scheme import ArticleData
-from ai.processor import normalize_body
+from ai.processor import normalize_for_ai
 
 
 def ai_manager(data_list: list[ArticleData]) -> list:
