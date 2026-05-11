@@ -13,9 +13,11 @@ from config import (
     KEYWORD_DEFAULT,
     QUERY_DEFAULT,
     NUMBER_OF_ARTICLES_DEFAULT,
+    AI_DEFAULT,
 )
 from storage.scheme import SORT_MAP, ArticleData
 from storage.storage import update_data
+from ai.manager import ai_manager
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -55,6 +57,11 @@ def parse_arguments() -> argparse.Namespace:
         type=int,
         default=NUMBER_OF_ARTICLES_DEFAULT,
         help="set the number of articles you want to get from a page.",
+    )
+    parser.add_argument(
+        "--ai",
+        default=AI_DEFAULT,
+        help="set True or False depending on whether you need ai processing data.",
     )
 
     args = parser.parse_args()
@@ -98,6 +105,9 @@ def main():
 
     # normalizeは一つずつの記事を処理
     data: list[ArticleData] = [normalize(item) for item in articles]
+
+    if args.ai:
+        data: list[ArticleData] = ai_manager(data)
 
     # json logファイル操作
     logs = update_data(

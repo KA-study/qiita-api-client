@@ -43,6 +43,7 @@ class ArticleData(TypedDict):
     tag_count: int
     likes: int
     stocks: int
+    body: str
 
 
 class ActivityItem(TypedDict):
