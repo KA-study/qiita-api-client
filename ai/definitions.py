@@ -9,6 +9,7 @@ class AIArticleData(TypedDict):
     title: str
     body: str
     tags: list[str]
+    hash_value: str
 
 
 class AIExecutionData(TypedDict):

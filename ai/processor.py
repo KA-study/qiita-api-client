@@ -1,4 +1,6 @@
 import re
+import hashlib
+
 from storage.scheme import ArticleData
 from ai.class_manager import AIArticleData
 
@@ -20,17 +22,24 @@ def normalize_body(body: str) -> str:
     return body.strip()
 
 
+def hash_body(body: str) -> str:
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
 def normalize_for_ai(data: ArticleData) -> AIArticleData:
     ai_data: AIArticleData = {
+        "data_type": "article",
         "id": "",
         "title": "",
         "body": "",
         "tags": [],
+        "hash_value": "",
     }
 
     ai_data["id"] = data["id"]
     ai_data["title"] = data["title"]
     ai_data["body"] = normalize_body(data["body"])
     ai_data["tags"] = data["tags"]
+    ai_data["hash_value"] = hash_body(data["body"])
 
     return ai_data
