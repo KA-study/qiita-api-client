@@ -1,0 +1,6 @@
+# 全体デフォルト
+* text=auto eol=lf
+
+# Windows系スクリプトは必要なら除外可能
+*.bat text eol=crlf
+*.cmd text eol=crlf
