@@ -1,51 +1,8 @@
-import re
-import hashlib
 import sqlite3
 
-from storage.scheme import ArticleData
-from ai.definitions import (AIArticleData, AIExecutionData, CREATE_AI_PROCESSED_TABLE,
-                            TABLE_COLUMN_ITEM,)
-
-
-def normalize_body(body: str) -> str:
-
-    # image
-    body = re.sub(r"!\[.*?\]\(.*?\)", "[IMAGE]", body)
-
-    # html
-    body = re.sub(r"<[^>]+>", "", body)
-
-    # url
-    body = re.sub(r"https?://\S+", "[URL]", body)
-
-    # multiple blank lines
-    body = re.sub(r"\n{3,}", "\n\n", body)
-
-    return body.strip()
-
-
-def hash_body(body: str) -> str:
-    return hashlib.sha256(body.encode("utf-8")).hexdigest()
-
-
-def normalize_for_ai(data: ArticleData) -> AIArticleData:
-    ai_data: AIArticleData = {
-        "data_type": "article",
-        "id": "",
-        "title": "",
-        "body": "",
-        "tags": [],
-        "hash_value": "",
-    }
-
-    ai_data["id"] = data["id"]
-    ai_data["title"] = data["title"]
-    ai_data["body"] = normalize_body(data["body"])
-    ai_data["tags"] = data["tags"]
-    ai_data["hash_value"] = hash_body(data["body"])
-
-    return ai_data
-
+from ai.definitions import (
+    TABLE_COLUMN_ITEM, AIArticleData, AIExecutionData, CREATE_AI_PROCESSED_TABLE
+)
 
 def fetch_one_column(column_key: TABLE_COLUMN_ITEM, conn: sqlite3.Connection) -> list:
     cursor = conn.cursor()
@@ -85,7 +42,8 @@ def convert_article_to_execution(ai_data_list: list[AIArticleData], hash_values:
 
     return ai_execution_list
 
-def DB_processor(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
+
+def DB_main_fetcher(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
 
     ai_processed_conn = sqlite3.connect("ai_processed_data.db")
     ai_processed_conn.execute(CREATE_AI_PROCESSED_TABLE)
@@ -95,8 +53,7 @@ def DB_processor(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
 
         ai_execution_list = convert_article_to_execution(ai_data_list, hash_values)
 
-
+        return ai_execution_list
     finally:
         ai_processed_conn.close()
-
 
