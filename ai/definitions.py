@@ -36,13 +36,15 @@ class AIArticleData(TypedDict):
 
 
 class AIExecutionData(TypedDict):
-    data_type: Literal["excution"]
+    data_type: Literal["execution"]
 
     id: str
     title: str
     body: str
     tags: list[str]
     hash_value: str  # 本文ハッシュ結果
+
+    reuse: bool
 
 
 # StrEnumにすることで、実質的にdictとして扱える。(Enuオブジェクトじゃなくてstrとしてふるまう)
