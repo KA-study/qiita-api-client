@@ -27,18 +27,20 @@ def convert_article_to_execution(ai_data_list: list[AIArticleData], hash_values:
     ai_execution_list: list[AIExecutionData] = [] 
 
     #ai_articleからai_executionに移す。
-    for ai_data, ai_execution_data in zip(ai_data_list, ai_execution_list):
+    for ai_data in ai_data_list:
+        ai_execution_data: AIExecutionData = {
+            "data_type": "execution",
 
-        if ai_data["hash_value"] in hash_values:
-            ai_execution_data["reuse"] = True
-        else:
-            ai_execution_data["id"] = ai_data["id"]
-            ai_execution_data["title"] = ai_data["title"]
-            ai_execution_data["body"] = ai_data["body"]
-            ai_execution_data["tags"] = ai_data["tags"]
-            ai_execution_data["hash_value"] = ai_data["hash_value"]
+            "id": ai_data["id"],
+            "title": ai_data["title"],
+            "body": ai_data["body"],
+            "tags": ai_data["tags"],
+            "hash_value": ai_data["hash_value"],
 
-            ai_execution_data["reuse"] = False
+            "reuse": True if ai_data["hash_value"] in hash_values else False
+        }
+
+        ai_execution_list.append(ai_execution_data)
 
     return ai_execution_list
 
