@@ -44,6 +44,10 @@ def first_costs_calc(
         estimated_cost=estimated_cost,
     )
 
+
+
 #一回目のコスト管理処理の親関数
 def first_cost_saver(api_execution_list: list[AIExecutionData]) -> None:
-    estimated_cost = ESTIMATED_COST = first_costs_calc(api_execution_list) 
+    estimated_cost: ESTIMATED_COST = first_costs_calc(api_execution_list) 
+
+    current_cost: COST_STATE = get_current_state() 

@@ -72,6 +72,38 @@ class AIProcessedData:
 
 #========以下、cost_manager関連、編集時は十分注意==========
 MAX_OUTPUT_TOKENS = 300
+DB_PATH = Path("ai/cost.db")
+
+
+CREATE_COST_LOG_TABLE = """
+CREATE TABLE IF NOT EXISTS cost_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    created_at TEXT NOT NULL,
+
+    execution_id TEXT NOT NULL,
+
+    event_type TEXT NOT NULL,
+
+    delta_cost INTEGER NOT NULL,
+
+    note TEXT
+)
+"""
+
+CREATE_COST_STATE_TABLE = """
+CREATE TABLE IF NOT EXISTS cost_state (
+    scope TEXT PRIMARY KEY,
+
+    available_cost INTEGER NOT NULL,
+
+    reserved_cost INTEGER NOT NULL,
+
+    committed_cost INTEGER NOT NULL,
+
+    updated_at TEXT NOT NULL
+)
+"""
 
 
 class COST(Enum):
