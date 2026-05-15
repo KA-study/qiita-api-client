@@ -1,5 +1,7 @@
 from typing import TypedDict, Literal
-from enum import StrEnum
+from dataclasses import dataclass
+from enum import StrEnum, Enum
+from pathlib import Path
 
 # このLiteralにふくまれる文字列はCREATE_AI_PROCESSED_TABLEの列項目であるが、スペルミスが極めて起こりやすいため、
 # AIArticleDataをEnum型継承にするなどして、対応すること。
@@ -54,7 +56,8 @@ class TargetAudienceLevel(StrEnum):
     ADVANCED = "advanced"
 
 
-class AIProcessedData(TypedDict):
+@dataclass
+class AIProcessedData:
     # 記事データ
     id: str
     title: str
@@ -65,3 +68,43 @@ class AIProcessedData(TypedDict):
     # 処理後データ
     summary: str
     audiencelevel: TargetAudienceLevel
+
+
+#========以下、cost_manager関連、編集時は十分注意==========
+MAX_OUTPUT_TOKENS = 300
+
+
+class COST(Enum):
+    OVER = "cost_over" 
+    SAFE = "cost_safe"
+
+@dataclass(slots=True)
+class ESTIMATED_COST:
+    estimated_cost: float = 0
+
+    input_tokens: int = 0
+    output_tokens: int = 0
+    total_tokens: int = 0
+
+@dataclass
+class AI_MODEL_INFO:
+    name: str
+
+    input_cost_per_token: float
+    output_cost_per_token: float
+
+AI_MODEL = AI_MODEL_INFO(
+    name="gpt-4o-mini",
+    input_cost_per_token=0.15 / 1_000_000,
+    output_cost_per_token=0.6 / 1_000_000
+)
+
+@dataclass
+class COST_STATE:
+    scope: str
+
+    available_cost: int
+    reserved_cost: int
+    committed_cost: int
+
+    updated_at: str

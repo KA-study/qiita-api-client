@@ -1,3 +1,23 @@
+## 2026/05/15 - first_cost_saverの設計方針
+
+### 結論
+first_cost_saverの処理順序を以下に示すものにする。
+
+### 処理順序
+（first_cost_saverの中）
+ai_execution_listのcost計算
+↓
+available_costなどのload
+↓
+実行の可否判断
+↓
+実行の可・不可に応じた処理
+↓
+必要なデータを戻す
+
+
+---
+
 ## 2026/05/14 - cost_managerの設計方針
 
 ### 結論
