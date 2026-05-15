@@ -42,6 +42,7 @@ def normalize_for_ai(data: ArticleData) -> AIArticleData:
     ai_data["title"] = data["title"]
     ai_data["body"] = normalize_body(data["body"])
     ai_data["tags"] = data["tags"]
-    ai_data["hash_value"] = hash_body(data["body"])
+    #hash_body()の引数がnormalizedであることに注意。
+    ai_data["hash_value"] = hash_body(ai_data["body"])
 
     return ai_data

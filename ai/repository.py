@@ -6,15 +6,22 @@ from ai.definitions import (
 
 def fetch_one_column(column_key: TABLE_COLUMN_ITEM, conn: sqlite3.Connection) -> list:
     cursor = conn.cursor()
+
+    ALLOWED_CORSOR = TABLE_COLUMN_ITEM
+
+    if column_key not in ALLOWED_CORSOR:
+        raise ValueError(f"Invalid value for table cursor: {column_key}")
+
     cursor.execute(f"SELECT {column_key} FROM ai_processed")
 
     rows = cursor.fetchall()
 
     #以下の判別は変更に弱い。方法を変更すること。
-    if not column_key == "title" and column_key in TABLE_COLUMN_ITEM:
-        for row in rows:
-            row = row[0]
-        return rows
+    #なぜこうしているのか。cursor.fetchall()の性質上、それぞれの値が単一であったとしても、(value,)というタプルで返されるため、
+    #これをvalueそのものに置き換えるためである。
+    if not column_key == "title":
+        rows = [row[0] for row in rows]
+        return rows 
     elif column_key == "tags":
         return rows
 
@@ -45,7 +52,7 @@ def convert_article_to_execution(ai_data_list: list[AIArticleData], hash_values:
     return ai_execution_list
 
 
-def DB_main_fetcher(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
+def execution_planner(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
 
     ai_processed_conn = sqlite3.connect("ai_processed_data.db")
     ai_processed_conn.execute(CREATE_AI_PROCESSED_TABLE)
