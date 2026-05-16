@@ -12,4 +12,6 @@ def ai_manager(data_list: list[ArticleData]) -> list[AIProcessedData]:
 
     ai_execution_list: list[AIExecutionData] = process_manager(data_list_copy) 
 
-    first_cost_saver(ai_execution_list)
+    cost_result = first_cost_saver(ai_execution_list)
+
+    #コスト超過したかに合わせて処理を進める。

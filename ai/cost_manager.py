@@ -61,11 +61,13 @@ def detect_excess(estimated: ESTIMATED_COST, current: COST_STATE) -> EXCESS_RESU
 
 
 #一回目のコスト管理処理の親関数
-def first_cost_saver(api_execution_list: list[AIExecutionData]) -> None:
+def first_cost_saver(api_execution_list: list[AIExecutionData]) -> EXCESS_RESULT:
     estimated_cost: ESTIMATED_COST = first_costs_calc(api_execution_list) 
 
     cost_repository = CostRepository()
 
     current_cost: COST_STATE = cost_repository.get_current_state()
 
-    detect_excess(estimated_cost, current_cost)
+    excess_result: EXCESS_RESULT = detect_excess(estimated_cost, current_cost)
+
+    return excess_result
