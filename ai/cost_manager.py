@@ -1,6 +1,5 @@
 #manage almost all except for definition, about AI API cost. Be careful when you edit this file.
 import tiktoken
-from functools import cache
 
 from ai.definitions import (
     AIExecutionData, ESTIMATED_COST, AI_MODEL,
@@ -18,7 +17,7 @@ def count_tokens(text: str, model: str) -> int:
 
 
 #total_costを保存して取り出す必要がある。DB操作が必要だと思われる。後ほど追加。
-def first_costs_calc(
+def calc_cost(
     ai_execution_list: list[AIExecutionData]
 ) -> ESTIMATED_COST:
 
@@ -62,7 +61,7 @@ def detect_excess(estimated: ESTIMATED_COST, current: COST_STATE) -> EXCESS_RESU
 
 #一回目のコスト管理処理の親関数
 def first_cost_saver(api_execution_list: list[AIExecutionData]) -> EXCESS_RESULT:
-    estimated_cost: ESTIMATED_COST = first_costs_calc(api_execution_list) 
+    estimated_cost: ESTIMATED_COST = calc_cost(api_execution_list) 
 
     cost_repository = CostRepository()
 
