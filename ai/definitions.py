@@ -116,7 +116,7 @@ class EXCESS_RESULT:
     is_excess: COST
 
     estimated_cost: float
-    available_cost: int
+    available_cost: float
 
     remaining_cost: float
 
