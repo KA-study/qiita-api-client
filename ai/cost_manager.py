@@ -4,8 +4,9 @@ from functools import cache
 
 from ai.definitions import (
     AIExecutionData, ESTIMATED_COST, AI_MODEL,
-    MAX_OUTPUT_TOKENS, COST_STATE)
-from ai.cost_repository import get_current_state
+    MAX_OUTPUT_TOKENS, COST_STATE, EXCESS_RESULT,
+    COST)
+from ai.cost_repository import CostRepository
 
 
 def get_encoding(model: str):
@@ -45,9 +46,26 @@ def first_costs_calc(
     )
 
 
+def detect_excess(estimated: ESTIMATED_COST, current: COST_STATE) -> EXCESS_RESULT:
+    remaining_cost = (
+        current.available_cost
+        - estimated.estimated_cost
+    )
+
+    return EXCESS_RESULT(
+        is_excess=COST.OVER_LIMIT if remaining_cost < 0 else COST.WITHIN_LIMIT,
+        estimated_cost=estimated.estimated_cost,
+        available_cost=current.available_cost,
+        remaining_cost=remaining_cost
+    )
+
 
 #一回目のコスト管理処理の親関数
 def first_cost_saver(api_execution_list: list[AIExecutionData]) -> None:
     estimated_cost: ESTIMATED_COST = first_costs_calc(api_execution_list) 
 
-    current_cost: COST_STATE = get_current_state() 
+    cost_repository = CostRepository()
+
+    current_cost: COST_STATE = cost_repository.get_current_state()
+
+    detect_excess(estimated_cost, current_cost)

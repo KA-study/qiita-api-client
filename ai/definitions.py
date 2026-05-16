@@ -107,8 +107,19 @@ CREATE TABLE IF NOT EXISTS cost_state (
 
 
 class COST(Enum):
-    OVER = "cost_over" 
-    SAFE = "cost_safe"
+    OVER_LIMIT = "over_limit" 
+    WITHIN_LIMIT = "within_limit"
+
+
+@dataclass(slots=True)
+class EXCESS_RESULT:
+    is_excess: COST
+
+    estimated_cost: float
+    available_cost: int
+
+    remaining_cost: float
+
 
 @dataclass(slots=True)
 class ESTIMATED_COST:
