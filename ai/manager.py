@@ -25,17 +25,9 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
     cost_repository = CostRepository()
 
     for execution_data in ai_execution_list:
+        processed_data = process_single_article(execution_data, cost_repository)
 
-        #現在コスト取得
-        current_cost = cost_repository.get_current_state()
+        processed_list.append(processed_data)
 
-        #今から実行予定の記事の予測コスト
-        estimated_cost = calc_cost([execution_data])
-
-        #コスト超過しないかの確認
-        detect_result = detect_excess(estimated_cost, current_cost) 
-
-        if detect_result.is_excess == COST.OVER_LIMIT: #ここから、AI処理を反映させていない状態で通常の検索結果へと戻るように再設計。
-            raise RuntimeError("Ruck of cost. The estimation of cost was not enough.")
-
-        #AI処理実行
+        #log dbに変更を記録する処理
+        ...
