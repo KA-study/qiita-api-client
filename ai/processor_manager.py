@@ -6,7 +6,7 @@ from ai.normalizer import normalize_for_ai
 from ai.repository import execution_planner
 
 
-def process_manager(data_list: list[ArticleData]) -> list[AIExecutionData]:
+def make_execution_list(data_list: list[ArticleData]) -> list[AIExecutionData]:
 
     ai_data_list: list[AIArticleData] = []
 

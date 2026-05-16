@@ -2,9 +2,9 @@ import copy
 
 from storage.scheme import ArticleData
 from ai.definitions import (
-    AIExecutionData, AIProcessedData, COST, EXCESS_RESULT, AI_MODEL)
-from ai.processor_manager import process_manager
-from ai.cost_manager import first_cost_saver, calc_cost, detect_excess
+    AIExecutionData, AIProcessedData, COST, EXCESS_RESULT)
+from ai.processor_manager import make_execution_list, process_single_article
+from ai.cost_manager import first_cost_saver
 from ai.cost_repository import CostRepository
 
 
@@ -12,7 +12,7 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
     # 安全のため
     data_list_copy = copy.deepcopy(data_list)
 
-    ai_execution_list: list[AIExecutionData] = process_manager(data_list_copy) 
+    ai_execution_list: list[AIExecutionData] = make_execution_list(data_list_copy) 
 
     first_cost_result: EXCESS_RESULT = first_cost_saver(ai_execution_list)
 
