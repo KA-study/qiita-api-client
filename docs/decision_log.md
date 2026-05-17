@@ -1,4 +1,18 @@
+## 2026/05/17 - ai api処理コードの実装要件
 
+### 結論
+AI APIを扱うコードは詳細に示す仕様にする。
+
+### 詳細
+- 入力
+AIExecutionData
+- 処理
+openaiモジュールを用いる。AIの操作には、function toolsを使用し、出力形式はJSONで厳密に定義する。
+- 出力
+AIProcessedData（使用したtokensのデータも含む。）
+※func toolsで指定された出力形式とは別枠で、メタデータとして実使用tokensなどが返ってくるため、それをAIProcessedDataに含めることにする。
+
+---
 
 ## 2026/05/16 - git commit commentのルールを定める
 

@@ -69,6 +69,52 @@ class AIProcessedData:
     summary: str
     audiencelevel: TargetAudienceLevel
 
+    used_input_tokens: float
+    used_output_tokens: float
+
+
+#========以下、AI API関連===============================
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "analyze_article",
+            "description": "Summarize the given text and classify reader level",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "summary": {
+                        "type": "string",
+                        "description": "Japanese summary of the article. Must be within 350 characters."
+                    },
+                    "audience_level": {
+                        "type": "string",
+                        "enum": ["beginner", "intermediate", "advanced"],
+                        "description": "Estimated reader level of the article"
+                    }
+                },
+                "required": ["summary", "audience_level"],
+                "additionalProperties": False
+            }
+        }
+    }
+]
+
+system_prompt = """
+You are an article analysis AI.
+
+You must always use the function "analyze_article" to return results.
+
+Constraints:
+- summary must be written in Japanese
+- summary must be 350 characters or less
+- audience_level must be one of:
+  - beginner
+  - intermediate
+  - advanced
+- Do not output anything except the function call.
+"""
+
 
 #========以下、cost_manager関連、編集時は十分注意==========
 MAX_OUTPUT_TOKENS = 300
