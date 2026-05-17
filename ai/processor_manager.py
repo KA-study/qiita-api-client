@@ -6,6 +6,7 @@ from ai.normalizer import normalize_for_ai
 from ai.repository import execution_planner
 from ai.cost_manager import calc_cost, detect_excess
 from ai.cost_repository import CostRepository
+from ai.ai_processor import ai_api_processor
 
 
 def make_execution_list(data_list: list[ArticleData]) -> list[AIExecutionData]:
@@ -38,7 +39,7 @@ def process_single_article(
         raise RuntimeError("Luck of cost. The estimation of cost was not enough.")
 
     #AI処理実行
-    ...
+    processed_data = ai_api_processor(execution_data)
 
     return 
 
