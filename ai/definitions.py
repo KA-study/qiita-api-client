@@ -2,6 +2,7 @@ from typing import TypedDict, Literal
 from dataclasses import dataclass
 from enum import StrEnum, Enum
 from pathlib import Path
+from openai.types.chat import ChatCompletionToolParam
 
 # このLiteralにふくまれる文字列はCREATE_AI_PROCESSED_TABLEの列項目であるが、スペルミスが極めて起こりやすいため、
 # AIArticleDataをEnum型継承にするなどして、対応すること。
@@ -52,7 +53,7 @@ class AIExecutionData(TypedDict):
 # StrEnumにすることで、実質的にdictとして扱える。(Enuオブジェクトじゃなくてstrとしてふるまう)
 class TargetAudienceLevel(StrEnum):
     BEGINNER = "beginner"
-    INTERMEDIATE = "intermidiate"
+    INTERMEDIATE = "intermediate"
     ADVANCED = "advanced"
 
 
@@ -74,7 +75,7 @@ class AIProcessedData:
 
 
 #========以下、AI API関連===============================
-tools = [
+TOOLS: list[ChatCompletionToolParam] = [
     {
         "type": "function",
         "function": {
