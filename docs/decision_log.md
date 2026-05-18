@@ -1,3 +1,19 @@
+## 2026/05/18 - OpenAI特殊オブジェクトの扱い
+
+### 結論
+OpenAI特殊オブジェクトはai_proseccor.py（インフラ層）に閉じ込め、ai_processor.pyでは基本型オブジェクトを扱う。
+
+### 理由
+OpenAI特殊オブジェクトは構造や仕組みが極めて独特で、それが一般的な処理にまで侵入するのは依存関係を深め、保守性を著しく失う原因となる。
+したがって、OpenAI特殊オブジェクトはapi_client.pyに閉じ込める。
+
+### 詳細
+- api_client.py
+クラス化し、openaiを扱うメソッドと特殊オブジェクトを基本型オブジェクトに直し（dict or json）返す。
+- ai_processor.py
+api_client.pyの機能から受け取った基本型オブジェクトをAIProcessedDataなどにnormalizeする。
+---
+
 ## 2026/05/17 - ai api処理コードの実装要件
 
 ### 結論
