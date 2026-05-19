@@ -60,13 +60,14 @@ class TargetAudienceLevel(StrEnum):
 @dataclass
 class AIOutPut:
     summary: str
-    audiencelevel: TargetAudienceLevel
+    audience_level: TargetAudienceLevel
 
 
 @dataclass
-class AIMeta:
+class AIMetaData:
     used_input_tokens: float
     used_output_tokens: float
+    used_total_tokens: float
 
 
 @dataclass
@@ -80,10 +81,13 @@ class AIProcessedData:
 
     # 処理後データ
     ai_output: AIOutPut
-    ai_meta: AIMeta
+    ai_metadata: AIMetaData
 
 
 #========以下、AI API関連===============================
+AUDIENCE_LEVEL = "audience_level"
+SUMMARY = "summary"
+
 TOOLS: list[ChatCompletionToolParam] = [
     {
         "type": "function",
@@ -103,7 +107,7 @@ TOOLS: list[ChatCompletionToolParam] = [
                         "description": "Estimated reader level of the article"
                     }
                 },
-                "required": ["summary", "audience_level"],
+                "required": [SUMMARY, AUDIENCE_LEVEL],
                 "additionalProperties": False
             }
         }

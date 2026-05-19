@@ -45,5 +45,5 @@ def process_single_article(
     #AI処理実行
     processed_data = ai_api_processor(execution_data)
 
-    return 
+    return processed_data
 
