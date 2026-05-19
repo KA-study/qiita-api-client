@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, NamedTuple
 from dataclasses import dataclass
 from enum import StrEnum, Enum
 from pathlib import Path
@@ -79,11 +79,8 @@ class AIProcessedData:
     hash_value: str
 
     # 処理後データ
-    summary: str
-    audiencelevel: TargetAudienceLevel
-
-    used_input_tokens: float
-    used_output_tokens: float
+    ai_output: AIOutPut
+    ai_meta: AIMeta
 
 
 #========以下、AI API関連===============================
@@ -127,6 +124,11 @@ Constraints:
   - advanced
 - Do not output anything except the function call.
 """
+
+
+class RawAIResponse(NamedTuple):
+    output: dict
+    metadata: dict
 
 
 #========以下、cost_manager関連、編集時は十分注意==========
