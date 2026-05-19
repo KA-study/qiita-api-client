@@ -92,6 +92,9 @@ class CostRepository:
         self.__conn = sqlite3.connect(DB_PATH) 
         self.__conn.row_factory = sqlite3.Row
 
+        self.initialize_db()
+        self.initialize_state()
+
 
     @property
     def conn(self) -> sqlite3.Connection:

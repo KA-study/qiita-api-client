@@ -58,6 +58,18 @@ class TargetAudienceLevel(StrEnum):
 
 
 @dataclass
+class AIOutPut:
+    summary: str
+    audiencelevel: TargetAudienceLevel
+
+
+@dataclass
+class AIMeta:
+    used_input_tokens: float
+    used_output_tokens: float
+
+
+@dataclass
 class AIProcessedData:
     # 記事データ
     id: str

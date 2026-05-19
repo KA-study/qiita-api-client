@@ -26,6 +26,10 @@ def process_single_article(
         cost_repository: CostRepository
 ) -> AIProcessedData:
 
+    #hash_value一致でAI処理パス（前回分流用）
+    if execution_data["reuse"]:
+        ...
+
     #現在コスト取得
     current_cost = cost_repository.get_current_state()
 
