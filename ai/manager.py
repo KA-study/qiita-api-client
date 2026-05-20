@@ -30,4 +30,4 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
         processed_list.append(processed_data)
 
         #log dbに変更を記録する処理
-        ...
+        cost_repository.record_ai_usage(processed_data.id, processed_data.ai_metadata)

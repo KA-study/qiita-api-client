@@ -140,11 +140,14 @@ MAX_COMPLETION_TOKENS = 300
 DB_PATH = Path("ai/cost.db")
 
 
+#今後追加予定
+EVENT_TYPE = "add"
+
 CREATE_COST_LOG_TABLE = """
 CREATE TABLE IF NOT EXISTS cost_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    article_id INTEGER NOT NULL,
+    article_id TEXT NOT NULL,
     created_at TEXT NOT NULL,
 
     event_type TEXT NOT NULL,
@@ -161,11 +164,9 @@ CREATE_COST_STATE_TABLE = """
 CREATE TABLE IF NOT EXISTS cost_state (
     scope TEXT PRIMARY KEY,
 
-    available_cost INTEGER NOT NULL,
-
-    reserved_cost INTEGER NOT NULL,
-
-    committed_cost INTEGER NOT NULL,
+    available_tokens INTEGER NOT NULL,
+    used_tokens INTEGER NOT NULL,
+    last_log_id: INTEGER NOT NULL,
 
     updated_at TEXT NOT NULL
 )
