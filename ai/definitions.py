@@ -144,13 +144,14 @@ CREATE_COST_LOG_TABLE = """
 CREATE TABLE IF NOT EXISTS cost_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
+    article_id INTEGER NOT NULL,
     created_at TEXT NOT NULL,
-
-    execution_id TEXT NOT NULL,
 
     event_type TEXT NOT NULL,
 
-    delta_cost INTEGER NOT NULL,
+    prompt_tokens INTEGER NOT NULL,
+    completion_tokens INTEGER NOT NULL,
+    total_tokens INTEGER NOT NULL,
 
     note TEXT
 )
