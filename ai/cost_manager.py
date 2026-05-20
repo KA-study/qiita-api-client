@@ -47,14 +47,14 @@ def calc_cost(
 
 def detect_excess(estimated: ESTIMATED_COST, current: COST_STATE) -> EXCESS_RESULT:
     remaining_cost = (
-        current.available_cost
+        current.available_tokens
         - estimated.estimated_cost
     )
 
     return EXCESS_RESULT(
         is_excess=COST.OVER_LIMIT if remaining_cost < 0 else COST.WITHIN_LIMIT,
         estimated_cost=estimated.estimated_cost,
-        available_cost=current.available_cost,
+        available_cost=current.available_tokens,
         remaining_cost=remaining_cost
     )
 

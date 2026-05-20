@@ -163,9 +163,9 @@ class CostRepository:
             cost_state = COST_STATE(
                 scope="",
 
-                available_cost=0,
-                reserved_cost=0,
-                committed_cost=0,
+                available_tokens=0,
+                used_tokens=0,
+                last_log_id="",
 
                 updated_at=""
             )
@@ -175,9 +175,9 @@ class CostRepository:
         cost_state = COST_STATE(
             scope=(row)["scope"],
 
-            available_cost=(row)["available_cost"],
-            reserved_cost=(row)["reserved_cost"],
-            committed_cost=(row)["committed_cost"],
+            available_tokens=(row)["available_tokens"],
+            used_tokens=(row)["used_tokens"],
+            last_log_id=(row)["last_log_id"],
 
             updated_at=(row)["updated_at"],
         )

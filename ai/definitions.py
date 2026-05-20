@@ -10,24 +10,6 @@ TABLE_COLUMN_ITEM = Literal[
     "title", "body", "hash_value", "tags", "summary", "audience_level"
 ]
 
-
-CREATE_AI_PROCESSED_TABLE = """
-CREATE TABLE IF NOT EXISTS ai_processed(
-    id TEXT PRIMARY KEY,
-    
-    --記事メタ
-    title TEXT NOT NULL,
-    body TEXT NOT NULL,
-    hash_value TEXT NOT NULL,
-    tags TEXT NOT NULL, --JSON文字列に変換しておく。
-    
-    --AI処理結果
-    summary TEXT NOT NULL,
-    audience_level TEXT NOT NULL
-    )
-"""
-
-
 class AIArticleData(TypedDict):
     data_type: Literal["article"]
 
@@ -213,8 +195,8 @@ AI_MODEL = AI_MODEL_INFO(
 class COST_STATE:
     scope: str
 
-    available_cost: int
-    reserved_cost: int
-    committed_cost: int
+    available_tokens: int
+    used_tokens: int
+    last_log_id: str
 
     updated_at: str
