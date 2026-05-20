@@ -148,11 +148,35 @@ CREATE TABLE IF NOT EXISTS cost_state (
 
     available_tokens INTEGER NOT NULL,
     used_tokens INTEGER NOT NULL,
-    last_log_id: INTEGER NOT NULL,
+    last_log_id: TEXT NOT NULL,
 
     updated_at TEXT NOT NULL
 )
 """
+
+CREATE_AI_PROCESSED_DATA_TABLE = """
+CREATE TABLE IF NOT EXISTS ai_processed_data (
+    article_id INTEGER PRIMARY KEY,
+
+    body_hash TEXT NOT NULL UNIQUE,
+
+    summary TEXT NOT NULL,
+
+    reader_level TEXT NOT NULL,
+
+    model_name TEXT NOT NULL,
+
+    prompt_version TEXT NOT NULL,
+
+    created_at TEXT NOT NULL,
+
+    updated_at TEXT NOT NULL
+)
+"""
+
+CREATE_AI_PROCESSED_HASH_INDEX = """
+CREATE INDEX IF NOT EXISTS idx_ai_processed_hash
+ON ai_processed_data(body_hash)"""
 
 
 class COST(Enum):

@@ -1,10 +1,9 @@
 import sqlite3
-from pathlib import Path
 from datetime import datetime
 
 from ai.definitions import (
-    CREATE_COST_LOG_TABLE, CREATE_AI_PROCESSED_TABLE, COST_STATE, DB_PATH,
-    AIMetaData, EVENT_TYPE
+    CREATE_COST_LOG_TABLE, CREATE_AI_PROCESSED_DATA_TABLE, CREATE_AI_PROCESSED_HASH_INDEX, CREATE_COST_STATE_TABLE,
+    COST_STATE, DB_PATH, AIMetaData, EVENT_TYPE
     )
 
 
@@ -14,8 +13,9 @@ class CostRepository:
         self.__conn = sqlite3.connect(DB_PATH) 
         self.__conn.row_factory = sqlite3.Row
 
-        self.initialize_db()
+        self.initialize_log()
         self.initialize_state()
+        self.initialize_processed_data_table()
 
 
     @property
@@ -23,24 +23,24 @@ class CostRepository:
         return self.__conn
    
 
-    def initialize_db(self) -> None:
+    def initialize_log(self) -> None:
         cursor = self.conn.cursor()
 
         cursor.execute(CREATE_COST_LOG_TABLE)
-        cursor.execute(CREATE_AI_PROCESSED_TABLE)
 
         self.conn.commit()
-
 
     def initialize_state(self) -> None:
         cursor = self.conn.cursor()
 
+        cursor.execute(CREATE_COST_STATE_TABLE)
+
         cursor.execute("""
         INSERT OR IGNORE INTO cost_state (
             scope,
-            available_cost,
-            reserved_cost,
-            committed_cost,
+            available_tokens,
+            used_tokens,
+            last_log_id,
             updated_at
         )
         VALUES (?, ?, ?, ?, ?)
@@ -48,12 +48,19 @@ class CostRepository:
             "global",
             10000,
             0,
-            0,
+            "",
             datetime.now().isoformat()
         ))
 
         self.conn.commit()
 
+    def initialize_processed_data_table(self) -> None:
+        cursor = self.conn.cursor()
+
+        cursor.execute(CREATE_AI_PROCESSED_DATA_TABLE)
+        cursor.execute(CREATE_AI_PROCESSED_HASH_INDEX)
+
+        self.conn.commit()
 
     def close(self) -> None:
         self.conn.close()
