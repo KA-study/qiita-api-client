@@ -43,8 +43,8 @@ class AIAPIClient:
 
        #metadataをdict/listなどの基本型に落とし込む 
         raw_ai_metadata = {
-            "input_tokens": response.usage.prompt_tokens,
-            "ouput_tokens": response.usage.completion_tokens,
+            "prompt_tokens": response.usage.prompt_tokens,
+            "completion_tokens": response.usage.completion_tokens,
             "total_tokens": response.usage.total_tokens
         }
     

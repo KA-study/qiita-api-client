@@ -65,8 +65,8 @@ class AIOutPut:
 
 @dataclass
 class AIMetaData:
-    used_input_tokens: float
-    used_output_tokens: float
+    used_prompt_tokens: float
+    used_completion_tokens: float
     used_total_tokens: float
 
 
@@ -136,7 +136,7 @@ class RawAIResponse(NamedTuple):
 
 
 #========以下、cost_manager関連、編集時は十分注意==========
-MAX_OUTPUT_TOKENS = 300
+MAX_COMPLETION_TOKENS = 300
 DB_PATH = Path("ai/cost.db")
 
 
@@ -190,21 +190,21 @@ class EXCESS_RESULT:
 class ESTIMATED_COST:
     estimated_cost: float = 0
 
-    input_tokens: int = 0
-    output_tokens: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
     total_tokens: int = 0
 
 @dataclass
 class AI_MODEL_INFO:
     name: str
 
-    input_cost_per_token: float
-    output_cost_per_token: float
+    prompt_cost_per_token: float
+    completion_cost_per_token: float
 
 AI_MODEL = AI_MODEL_INFO(
     name="gpt-4o-mini",
-    input_cost_per_token=0.15 / 1_000_000,
-    output_cost_per_token=0.6 / 1_000_000
+    prompt_cost_per_token=0.15 / 1_000_000,
+    completion_cost_per_token=0.6 / 1_000_000
 )
 
 @dataclass

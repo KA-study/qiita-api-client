@@ -29,8 +29,8 @@ def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData
     )
 
     meta_data = AIMetaData(
-        used_input_tokens=raw_data.metadata["input_tokens"],
-        used_output_tokens=raw_data.metadata["output_tokens"],
+        used_prompt_tokens=raw_data.metadata["prompt_tokens"],
+        used_completion_tokens=raw_data.metadata["completion_tokens"],
         used_total_tokens=raw_data.metadata["total_tokens"]
     )
 

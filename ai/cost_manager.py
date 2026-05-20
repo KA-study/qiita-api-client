@@ -3,7 +3,7 @@ import tiktoken
 
 from ai.definitions import (
     AIExecutionData, ESTIMATED_COST, AI_MODEL,
-    MAX_OUTPUT_TOKENS, COST_STATE, EXCESS_RESULT,
+    MAX_COMPLETION_TOKENS, COST_STATE, EXCESS_RESULT,
     COST)
 from ai.cost_repository import CostRepository
 
@@ -21,25 +21,25 @@ def calc_cost(
     ai_execution_list: list[AIExecutionData]
 ) -> ESTIMATED_COST:
 
-    input_tokens = 0
-    output_tokens = 0
+    prompt_tokens = 0
+    completion_tokens = 0
 
     for data in ai_execution_list:
-        input_tokens += count_tokens(data["title"], AI_MODEL.name)
-        input_tokens += count_tokens(data["body"], AI_MODEL.name)
+        prompt_tokens += count_tokens(data["title"], AI_MODEL.name)
+        prompt_tokens += count_tokens(data["body"], AI_MODEL.name)
 
-        output_tokens += MAX_OUTPUT_TOKENS
+        completion_tokens += MAX_COMPLETION_TOKENS
 
-    total_tokens = input_tokens + output_tokens
+    total_tokens = prompt_tokens + completion_tokens
 
     estimated_cost = (
-        input_tokens * AI_MODEL.input_cost_per_token
-        + output_tokens * AI_MODEL.output_cost_per_token
+        prompt_tokens * AI_MODEL.prompt_cost_per_token
+        + completion_tokens * AI_MODEL.completion_cost_per_token
     )
 
     return ESTIMATED_COST(
-        input_tokens=input_tokens,
-        output_tokens=output_tokens,
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
         total_tokens=total_tokens,
         estimated_cost=estimated_cost,
     )
