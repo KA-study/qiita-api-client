@@ -36,6 +36,26 @@ class AIRepository:
         raise ValueError(f"Invalid value: {column_key} was selected as column_key of ai_processed TABLE.") 
 
 
+    def fetch_one_row_from_processed_table(self, article_id: str):
+        cursor = self.__conn.cursor()
+        
+        cursor.execute(
+            """
+            SELECT *
+            FROM ai_processed
+            WHERE article_id = ?
+            """,
+            (article_id,)
+        )
+
+        row = cursor.fetchone()
+
+        # データが存在しない場合
+        if row is None:
+            raise ValueError(f"No data found for article_id={article_id}")
+
+        return row
+
     def record_ai_processed_data(self, processed_data: AIProcessedData) -> None:
         cursor = self.__conn.cursor()
 
