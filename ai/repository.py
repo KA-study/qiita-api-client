@@ -3,7 +3,8 @@ from datetime import datetime
 from typing import Literal
 
 from ai.definitions import (
-    CREATE_AI_PROCESSED_DATA_TABLE, DB_PATH, AIProcessedData, AI_MODEL_INFO
+    CREATE_AI_PROCESSED_DATA_TABLE, CREATE_AI_PROCESSED_HASH_INDEX,
+    DB_PATH, AIProcessedData, AI_MODEL_INFO
 )
 
 class AIRepository:
@@ -22,14 +23,15 @@ class AIRepository:
         cursor = self.__conn.cursor()
 
         cursor.execute(CREATE_AI_PROCESSED_DATA_TABLE)
-
-        self.__conn.commit
+        cursor.execute(CREATE_AI_PROCESSED_HASH_INDEX)
+        
+        self.__conn.commit()
 
 
     def fetch_one_column_from_processed_table(self, column_key: str) -> list:
         cursor = self.__conn.cursor()
 
-        cursor.execute(f"SELECT {column_key} FROM ai_processed")
+        cursor.execute(f"SELECT {column_key} FROM ai_processed_data")
 
         rows = cursor.fetchall()
 

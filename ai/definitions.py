@@ -163,7 +163,7 @@ CREATE_AI_PROCESSED_DATA_TABLE = """
 CREATE TABLE IF NOT EXISTS ai_processed_data (
     article_id TEXT PRIMARY KEY,
 
-    body_hash TEXT NOT NULL UNIQUE,
+    hash_value TEXT NOT NULL UNIQUE,
 
     summary TEXT NOT NULL,
 
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS ai_processed_data (
 
 CREATE_AI_PROCESSED_HASH_INDEX = """
 CREATE INDEX IF NOT EXISTS idx_ai_processed_hash
-ON ai_processed_data(body_hash)"""
+ON ai_processed_data(hash_value)"""
 
 
 class COST(Enum):

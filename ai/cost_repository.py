@@ -15,7 +15,6 @@ class CostRepository:
 
         self.initialize_log()
         self.initialize_state()
-        self.initialize_processed_data_table()
 
 
     @property
@@ -54,13 +53,6 @@ class CostRepository:
 
         self.conn.commit()
 
-    def initialize_processed_data_table(self) -> None:
-        cursor = self.conn.cursor()
-
-        cursor.execute(CREATE_AI_PROCESSED_DATA_TABLE)
-        cursor.execute(CREATE_AI_PROCESSED_HASH_INDEX)
-
-        self.conn.commit()
 
     def close(self) -> None:
         self.conn.close()
