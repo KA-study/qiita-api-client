@@ -3,10 +3,47 @@ from ai.definitions import (
     AIArticleData, AIExecutionData, AIProcessedData, COST
 )
 from ai.normalizer import normalize_for_ai
-from ai.repository import execution_planner
+from ai.repository import AIRepository
 from ai.cost_manager import calc_cost, detect_excess
 from ai.cost_repository import CostRepository
 from ai.ai_processor import ai_api_processor
+
+
+#hash_valuesは、今までにAI処理をした記事の本文ハッシュ値リスト
+def convert_article_to_execution(ai_data_list: list[AIArticleData], hash_values: list) -> list[AIExecutionData]:
+
+    ai_execution_list: list[AIExecutionData] = [] 
+
+    #ai_articleからai_executionに移す。
+    for ai_data in ai_data_list:
+        ai_execution_data: AIExecutionData = {
+            "data_type": "execution",
+
+            "id": ai_data["id"],
+            "title": ai_data["title"],
+            "body": ai_data["body"],
+            "tags": ai_data["tags"],
+            "hash_value": ai_data["hash_value"],
+
+            "reuse": True if ai_data["hash_value"] in hash_values else False
+        }
+
+        ai_execution_list.append(ai_execution_data)
+
+    return ai_execution_list
+
+
+def execution_planner(ai_data_list: list[AIArticleData]) -> list[AIExecutionData]:
+    ai_repository = AIRepository()
+
+    try:
+        hash_values: list = ai_repository.fetch_one_column_from_processed_table("hash_value")
+
+        ai_execution_list = convert_article_to_execution(ai_data_list, hash_values)
+
+        return ai_execution_list
+    finally:
+        ai_repository.close()
 
 
 def make_execution_list(data_list: list[ArticleData]) -> list[AIExecutionData]:

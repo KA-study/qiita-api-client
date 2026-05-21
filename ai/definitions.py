@@ -154,9 +154,13 @@ CREATE TABLE IF NOT EXISTS cost_state (
 )
 """
 
+TABLE_COLUMN_ITEM = {
+    "article_id", "body_hash", "summary", "reader_level", "model_name", "processed_at"
+}
+
 CREATE_AI_PROCESSED_DATA_TABLE = """
 CREATE TABLE IF NOT EXISTS ai_processed_data (
-    article_id INTEGER PRIMARY KEY,
+    article_id TEXT PRIMARY KEY,
 
     body_hash TEXT NOT NULL UNIQUE,
 
@@ -166,11 +170,7 @@ CREATE TABLE IF NOT EXISTS ai_processed_data (
 
     model_name TEXT NOT NULL,
 
-    prompt_version TEXT NOT NULL,
-
-    created_at TEXT NOT NULL,
-
-    updated_at TEXT NOT NULL
+    processed_at TEXT NOT NULL,
 )
 """
 

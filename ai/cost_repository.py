@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ai.definitions import (
     CREATE_COST_LOG_TABLE, CREATE_AI_PROCESSED_DATA_TABLE, CREATE_AI_PROCESSED_HASH_INDEX, CREATE_COST_STATE_TABLE,
-    COST_STATE, DB_PATH, AIMetaData, EVENT_TYPE
+    COST_STATE, DB_PATH, AIMetaData, EVENT_TYPE, AIProcessedData, AI_MODEL_INFO
     )
 
 
@@ -148,13 +148,11 @@ class CostRepository:
         ))       
 
     def record_ai_usage(self, article_id: str, metadata: AIMetaData) -> None:
-        with self.conn:  # ← トランザクション開始
+        with self.conn:  # ← トランザクション開始、それぞれのself.conn.commitをが不要
             self.__insert_log(article_id, metadata)
             self.__update_cost_state()       
 
 
-    #cost_stateテーブルから情報を取得する関数。
-    #logテーブルから情報をcost_stateテーブルに移す関数はまだ実装していない。
     def get_current_state(self) -> COST_STATE:
         cursor = self.conn.cursor()
 
