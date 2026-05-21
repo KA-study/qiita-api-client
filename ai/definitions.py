@@ -69,6 +69,7 @@ class AIProcessedData:
 #========以下、AI API関連===============================
 AUDIENCE_LEVEL = "audience_level"
 SUMMARY = "summary"
+REUSE_LIMIT_DAYS: int = 30
 
 TOOLS: list[ChatCompletionToolParam] = [
     {

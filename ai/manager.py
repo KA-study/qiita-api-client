@@ -27,10 +27,13 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
     ai_repository = AIRepository()
 
     for execution_data in ai_execution_list:
-        processed_data: AIProcessedData = process_single_article(execution_data, cost_repository)
-
+        processed_data: AIProcessedData = process_single_article(ai_repository, execution_data, cost_repository)
+        
         processed_list.append(processed_data)
 
         #log dbに変更を記録する処理
         cost_repository.record_ai_usage(processed_data.id, processed_data.ai_metadata)
         ai_repository.record_ai_processed_data(processed_data)
+
+    cost_repository.close()
+    ai_repository.close()
