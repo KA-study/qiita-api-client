@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS ai_processed_data (
 
     model_name TEXT NOT NULL,
 
-    processed_at TEXT NOT NULL,
+    processed_at TEXT NOT NULL
 )
 """
 
