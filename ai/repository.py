@@ -53,7 +53,7 @@ class AIRepository:
         cursor.execute(
             """
             SELECT *
-            FROM ai_processed
+            FROM ai_processed_data
             WHERE article_id = ?
             """,
             (article_id,)
