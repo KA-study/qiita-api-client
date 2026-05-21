@@ -51,7 +51,8 @@ def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData
 def ai_api_processor(execution_data: AIExecutionData) -> AIProcessedData:
     ai_api_client = AIAPIClient()
 
-    processed_data_json: RawAIResponse = ai_api_client.call_ai(execution_data)
+    article_data: str = get_parameters_from_AIExecutionData(execution_data)
+    processed_data_json: RawAIResponse = ai_api_client.call_ai(article_data)
 
     ai_processed_data: AIProcessedData = make_processed_data(processed_data_json, execution_data)
 

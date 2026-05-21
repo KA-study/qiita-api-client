@@ -7,9 +7,8 @@ import os
 from typing import cast
 
 from ai.definitions import (
-    AIExecutionData, TOOLS, AI_MODEL, system_prompt, RawAIResponse
+    TOOLS, AI_MODEL, system_prompt, RawAIResponse
     )
-from ai.ai_processor import get_parameters_from_AIExecutionData
 
 
 class AIAPIClient:
@@ -51,7 +50,7 @@ class AIAPIClient:
         return (raw_ai_output, raw_ai_metadata)
     
 
-    def call_ai(self, execution_data: AIExecutionData) -> RawAIResponse:
+    def call_ai(self, article_data: str) -> RawAIResponse:
 
         response = self.client.chat.completions.create(
             model=AI_MODEL.name,
@@ -62,7 +61,7 @@ class AIAPIClient:
                 },
                 {
                     "role": "user",
-                    "content": get_parameters_from_AIExecutionData(execution_data)
+                    "content": article_data
                 }
             ],
             tools=TOOLS,
