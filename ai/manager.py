@@ -9,17 +9,19 @@ from ai.cost_repository import CostRepository
 
 from ai.repository import AIRepository
 
-def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_RESULT):
+def ai_manager(data_list: list[ArticleData]) -> tuple[list[AIProcessedData] | None, EXCESS_RESULT]:
     # 安全のため
     data_list_copy = copy.deepcopy(data_list)
 
     ai_execution_list: list[AIExecutionData] = make_execution_list(data_list_copy) 
 
+    #コスト管理の重要関数。編集時要注意。
     first_cost_result: EXCESS_RESULT = first_cost_saver(ai_execution_list)
 
     #コスト超過したかに合わせて処理を進める。
     if first_cost_result.is_excess == COST.OVER_LIMIT:
-        return (ai_execution_list, first_cost_result)
+        #Noneを返すのは応急処置。エラーを投げるようにして、エラーハンドリングするようにするなど、改良する。
+        return (None, first_cost_result)
 
     processed_list: list[AIProcessedData] = []
 
@@ -27,6 +29,7 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
     ai_repository = AIRepository()
 
     for execution_data in ai_execution_list:
+        #予測必要tokensと実使用tokensが違ったときなどに、エラーが出る。エラーハンドリングを追加する。
         processed_data: AIProcessedData = process_single_article(ai_repository, execution_data, cost_repository)
         
         processed_list.append(processed_data)
@@ -37,3 +40,5 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
 
     cost_repository.close()
     ai_repository.close()
+
+    return (processed_list, first_cost_result)

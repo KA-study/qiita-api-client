@@ -18,6 +18,7 @@ from config import (
 from storage.scheme import SORT_MAP, ArticleData
 from storage.storage import update_data
 from ai.manager import ai_manager
+from ai.definitions import AIProcessedData, EXCESS_RESULT
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -104,10 +105,23 @@ def main():
     articles = fetch_pagenator(params, url=URL)
 
     # normalizeは一つずつの記事を処理
+    #ここでprocessor_dataを初期化（None）にしている。
     data: list[ArticleData] = [normalize(item) for item in articles]
 
+    #AIProcessedDataをArticleDataに埋め込み（記事id対応）
     if args.ai:
-        data: list[ArticleData] = ai_manager(data)
+        processed_data: list[AIProcessedData] | None
+        excess_result: EXCESS_RESULT
+
+        processed_data, excess_result = ai_manager(data)
+
+        #ArticleData(TypedDict)がミュータブルであることを利用している。
+        if processed_data is not None:
+            article_map = {article["id"]: article for article in data}
+
+            for ai_data in processed_data:
+                article_map[ai_data.id]["ai_processed_data"] = ai_data
+
 
     # json logファイル操作
     logs = update_data(

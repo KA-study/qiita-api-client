@@ -29,6 +29,8 @@ def normalize(item: dict) -> ArticleData:
             "likes": item["likes_count"],
             "stocks": item["stocks_count"],
             "body": item["body"],
+
+            "ai_processed_data": None
         }
     except KeyError as ex:
         raise ValueError(f"Invalid item structure: missing {ex}")

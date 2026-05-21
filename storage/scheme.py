@@ -1,6 +1,7 @@
 from typing import TypedDict, Dict
 from enum import Enum
 
+from ai.definitions import AIProcessedData
 
 class SortOption(Enum):
     CREATED_AT = "created_at"
@@ -44,6 +45,8 @@ class ArticleData(TypedDict):
     likes: int
     stocks: int
     body: str
+
+    ai_processed_data: AIProcessedData | None
 
 
 class ActivityItem(TypedDict):
