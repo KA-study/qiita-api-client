@@ -113,32 +113,37 @@ def process_single_article(
         cost_repository: CostRepository
 ) -> AIProcessedData:
 
-    processed_dict: dict = ai_repository.fetch_one_row_from_processed_table(execution_data["id"])
 
     #hash_value一致でAI処理パス（前回分流用）コースに入る
-    if should_reuse_ai_result(execution_data, processed_dict):
+    if execution_data["reuse"]:
+        
+        processed_dict: dict = ai_repository.fetch_one_row_from_processed_table(execution_data["id"])
 
-        processed_data: AIProcessedData = dict_to_AIProcessedData(
-            execution_data,
-            processed_dict["summary"],
-            processed_dict["reader_level"]
-        )
+        if elapsed_day(processed_dict["processed_at"]):
 
-    else:
-        #現在コスト取得
-        current_cost = cost_repository.get_current_state()
+            processed_data: AIProcessedData = dict_to_AIProcessedData(
+                execution_data,
+                processed_dict["summary"],
+                processed_dict["reader_level"]
+            )
 
-        #今から実行予定の記事の予測コスト
-        estimated_cost = calc_cost([execution_data])
+            return processed_data
+        
 
-        #コスト超過しないかの確認
-        detect_result = detect_excess(estimated_cost, current_cost) 
+    #現在コスト取得
+    current_cost = cost_repository.get_current_state()
 
-        if detect_result.is_excess == COST.OVER_LIMIT: #ここから、AI処理を反映させていない状態で通常の検索結果へと戻るように再設計。
-            raise RuntimeError("Luck of cost. The estimation of cost was not enough.")
+    #今から実行予定の記事の予測コスト
+    estimated_cost = calc_cost([execution_data])
 
-        #AI処理実行
-        processed_data: AIProcessedData = ai_api_processor(execution_data)
+    #コスト超過しないかの確認
+    detect_result = detect_excess(estimated_cost, current_cost) 
+
+    if detect_result.is_excess == COST.OVER_LIMIT: #ここから、AI処理を反映させていない状態で通常の検索結果へと戻るように再設計。
+        raise RuntimeError("Luck of cost. The estimation of cost was not enough.")
+
+    #AI処理実行
+    processed_data: AIProcessedData = ai_api_processor(execution_data)
 
     return processed_data
 
