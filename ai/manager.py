@@ -7,6 +7,7 @@ from ai.processor_manager import make_execution_list, process_single_article
 from ai.cost_manager import first_cost_saver
 from ai.cost_repository import CostRepository
 
+from ai.repository import AIRepository
 
 def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_RESULT):
     # 安全のため
@@ -23,11 +24,13 @@ def ai_manager(data_list: list[ArticleData]) -> (list[AIProcessedData], EXCESS_R
     processed_list: list[AIProcessedData] = []
 
     cost_repository = CostRepository()
+    ai_repository = AIRepository()
 
     for execution_data in ai_execution_list:
-        processed_data = process_single_article(execution_data, cost_repository)
+        processed_data: AIProcessedData = process_single_article(execution_data, cost_repository)
 
         processed_list.append(processed_data)
 
         #log dbに変更を記録する処理
         cost_repository.record_ai_usage(processed_data.id, processed_data.ai_metadata)
+        ai_repository.record_ai_processed_data(processed_data)
