@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS cost_state (
 
     available_tokens INTEGER NOT NULL,
     used_tokens INTEGER NOT NULL,
-    last_log_id: TEXT NOT NULL,
+    last_log_id TEXT NOT NULL,
 
     updated_at TEXT NOT NULL
 )
