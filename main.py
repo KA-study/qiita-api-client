@@ -102,6 +102,7 @@ def main():
 
     params = {
         "query": query,
+        # あれ、ここ飛ばしてる？
         "page": ...,
         "per_page": args.number_of_articles,
     }
