@@ -80,11 +80,15 @@ def parse_arguments() -> argparse.Namespace:
 def build_query(args: argparse.Namespace) -> str:
     parts = []
 
-    parts.append(args.keyword)
+    if args.keyword:
+        parts.append(args.keyword)
     # sortの設計に問題があったため、API動作確認のため、一時的にstock:>20を追加。
-    parts.append(f"tag:{args.tag}")
-    parts.append(f"stocks:>{args.stocks}")
-    parts.append(args.query)
+    if args.tag:
+        parts.append(f"tag:{args.tag}")
+    if args.stocks:
+        parts.append(f"stocks:>{args.stocks}")
+    if args.query:
+        parts.append(args.query)
 
     # クエリパラメーターはスペース区切りの文字列。
     return " ".join(parts)
