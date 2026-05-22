@@ -3,7 +3,7 @@ import json
 from ai.definitions import (
     AIExecutionData, AIProcessedData, RawAIResponse, SUMMARY, AUDIENCE_LEVEL,
     AIOutPut, AIMetaData)
-from ai.api_client import AIAPIClient
+from ai.api_client import AIAPIClient, MockAIAPIClient
 
 
 
@@ -48,11 +48,14 @@ def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData
     return ai_processed_data
 
 
+#mockと実機能の差し替えは手動。
 def ai_api_processor(execution_data: AIExecutionData) -> AIProcessedData:
-    ai_api_client = AIAPIClient()
+    #ai_api_client = AIAPIClient()
+    mock_ai_api_client = MockAIAPIClient()
 
     article_data: str = get_parameters_from_AIExecutionData(execution_data)
-    processed_data_json: RawAIResponse = ai_api_client.call_ai(article_data)
+    #processed_data_json: RawAIResponse = ai_api_client.call_ai(article_data)
+    processed_data_json: RawAIResponse = mock_ai_api_client.call_ai(article_data)
 
     ai_processed_data: AIProcessedData = make_processed_data(processed_data_json, execution_data)
 

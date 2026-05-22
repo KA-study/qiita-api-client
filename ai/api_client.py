@@ -77,4 +77,28 @@ class AIAPIClient:
             output=raw_ai_output,
             metadata=raw_ai_metadata
         )
-    
+
+
+#デバッグ時差し替え用
+class MockAIAPIClient:
+
+    def call_ai(self, article_data: str) -> RawAIResponse:
+
+        mock_output = {
+            "summary": (
+                "これはモック環境で生成された要約です。"
+                "実際のOpenAI APIは呼び出していません。"
+            ),
+            "reader_level": TargetReaderLevel.BEGINNER.value
+        }
+
+        mock_metadata = {
+            "prompt_tokens": 100,
+            "completion_tokens": 50,
+            "total_tokens": 150
+        }
+
+        return RawAIResponse(
+            output=mock_output,
+            metadata=mock_metadata
+        )
