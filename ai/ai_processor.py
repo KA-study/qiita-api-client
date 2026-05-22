@@ -14,7 +14,7 @@ def get_parameters_from_AIExecutionData(execution_data: AIExecutionData) -> str:
             "tags": execution_data["tags"],
             "body": execution_data["body"]
         },
-        ensure=False
+        ensure_ascii=False
     )
 
 def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData) -> AIProcessedData:
