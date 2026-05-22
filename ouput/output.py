@@ -11,7 +11,7 @@ def format_ai_processed(ai: AIProcessedData | None) -> str | None:
     
     return (
         f"    ai_summary: {ai.ai_output.summary}\n"
-        f"    ai_level: {ai.ai_output.audience_level}\n"
+        f"    ai_level: {ai.ai_output.reader_level}\n"
         f"    ai_cost: {ai.ai_metadata.used_total_tokens}\n"
     )
 

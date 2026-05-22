@@ -3,7 +3,7 @@ from datetime import datetime
 from storage.scheme import ArticleData
 from ai.definitions import (
     AIArticleData, AIExecutionData, AIProcessedData, COST, AIOutPut,
-    AIMetaData, TargetAudienceLevel, REUSE_LIMIT_DAYS
+    AIMetaData, TargetReaderLevel, REUSE_LIMIT_DAYS
 )
 from ai.normalizer import normalize_for_ai
 from ai.repository import AIRepository
@@ -75,7 +75,7 @@ def dict_to_AIProcessedData(
     try: 
         ai_output = AIOutPut(
             summary=summary,
-            audience_level=TargetAudienceLevel[reader_level]
+            reader_level=TargetReaderLevel[reader_level]
         )
     except ValueError:
         raise ValueError(f"Invalid Reader_level: {reader_level}")

@@ -1,7 +1,7 @@
 import json
 
 from ai.definitions import (
-    AIExecutionData, AIProcessedData, RawAIResponse, SUMMARY, AUDIENCE_LEVEL,
+    AIExecutionData, AIProcessedData, RawAIResponse, SUMMARY, READER_LEVEL,
     AIOutPut, AIMetaData)
 from ai.api_client import AIAPIClient, MockAIAPIClient
 
@@ -19,13 +19,13 @@ def get_parameters_from_AIExecutionData(execution_data: AIExecutionData) -> str:
 
 def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData) -> AIProcessedData:
 
-    if set(raw_data.output.keys()) == {SUMMARY, AUDIENCE_LEVEL}: 
+    if set(raw_data.output.keys()) == {SUMMARY, READER_LEVEL}: 
         raise ValueError("required data was not returned by openai.")
 
 
     output = AIOutPut(
         summary=raw_data.output[SUMMARY],
-        audience_level=raw_data.output[AUDIENCE_LEVEL]
+        reader_level=raw_data.output[READER_LEVEL]
     )
 
     meta_data = AIMetaData(

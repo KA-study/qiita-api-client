@@ -7,7 +7,7 @@ from openai.types.chat import ChatCompletionToolParam
 # このLiteralにふくまれる文字列はCREATE_AI_PROCESSED_TABLEの列項目であるが、スペルミスが極めて起こりやすいため、
 # AIArticleDataをEnum型継承にするなどして、対応すること。
 TABLE_COLUMN_ITEM = Literal[
-    "title", "body", "hash_value", "tags", "summary", "audience_level"
+    "title", "body", "hash_value", "tags", "summary", "reader_level"
 ]
 
 class AIArticleData(TypedDict):
@@ -33,7 +33,7 @@ class AIExecutionData(TypedDict):
 
 
 # StrEnumにすることで、実質的にdictとして扱える。(Enuオブジェクトじゃなくてstrとしてふるまう)
-class TargetAudienceLevel(StrEnum):
+class TargetReaderLevel(StrEnum):
     BEGINNER = "beginner"
     INTERMEDIATE = "intermediate"
     ADVANCED = "advanced"
@@ -42,7 +42,7 @@ class TargetAudienceLevel(StrEnum):
 @dataclass
 class AIOutPut:
     summary: str
-    audience_level: TargetAudienceLevel
+    reader_level: TargetReaderLevel
 
 
 @dataclass
@@ -67,7 +67,7 @@ class AIProcessedData:
 
 
 #========以下、AI API関連===============================
-AUDIENCE_LEVEL = "audience_level"
+READER_LEVEL = "reader_level"
 SUMMARY = "summary"
 REUSE_LIMIT_DAYS: int = 30
 
@@ -84,13 +84,13 @@ TOOLS: list[ChatCompletionToolParam] = [
                         "type": "string",
                         "description": "Japanese summary of the article. Must be within 350 characters."
                     },
-                    "audience_level": {
+                    "reader_level": {
                         "type": "string",
                         "enum": ["beginner", "intermediate", "advanced"],
                         "description": "Estimated reader level of the article"
                     }
                 },
-                "required": [SUMMARY, AUDIENCE_LEVEL],
+                "required": [SUMMARY, READER_LEVEL],
                 "additionalProperties": False
             }
         }
@@ -105,7 +105,7 @@ You must always use the function "analyze_article" to return results.
 Constraints:
 - summary must be written in Japanese
 - summary must be 350 characters or less
-- audience_level must be one of:
+- reader_level must be one of:
   - beginner
   - intermediate
   - advanced

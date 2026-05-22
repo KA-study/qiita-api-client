@@ -90,7 +90,7 @@ class AIRepository:
             processed_data.id,
             processed_data.hash_value,
             processed_data.ai_output.summary,
-            processed_data.ai_output.audience_level,
+            processed_data.ai_output.reader_level,
             AI_MODEL_INFO.name,
             datetime.now().isoformat
         ))

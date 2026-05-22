@@ -7,7 +7,7 @@ import os
 from typing import cast
 
 from ai.definitions import (
-    TOOLS, AI_MODEL, system_prompt, RawAIResponse
+    TOOLS, AI_MODEL, system_prompt, RawAIResponse, TargetReaderLevel
     )
 
 
