@@ -4,7 +4,7 @@ from typing import Literal
 
 from ai.definitions import (
     CREATE_AI_PROCESSED_DATA_TABLE, CREATE_AI_PROCESSED_HASH_INDEX,
-    DB_PATH, AIProcessedData, AI_MODEL_INFO
+    DB_PATH, AIProcessedData, AI_MODEL
 )
 
 class AIRepository:
@@ -73,7 +73,7 @@ class AIRepository:
         cursor.execute("""
             INSERT INTO ai_processed_data (
                 article_id,
-                body_hash,
+                hash_value,
                 summary,
                 reader_level,
                 model_name,
@@ -81,18 +81,18 @@ class AIRepository:
             )
             VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(article_id) DO UPDATE SET
-                body_hash = excluded.body_hash,
+                hash_value = excluded.hash_value,
                 summary = excluded.summary,
                 reader_level = excluded.reader_level,
                 model_name = excluded.model_name,
                 processed_at = excluded.processed_at
-        )""", (
+        """, (
             processed_data.id,
             processed_data.hash_value,
             processed_data.ai_output.summary,
             processed_data.ai_output.reader_level,
-            AI_MODEL_INFO.name,
-            datetime.now().isoformat
+            AI_MODEL.name,
+            datetime.now().isoformat()
         ))
     
-        self.__conn.commit
+        self.__conn.commit()
