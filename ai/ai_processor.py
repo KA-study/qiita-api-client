@@ -19,7 +19,7 @@ def get_parameters_from_AIExecutionData(execution_data: AIExecutionData) -> str:
 
 def make_processed_data(raw_data: RawAIResponse, execution_data: AIExecutionData) -> AIProcessedData:
 
-    if set(raw_data.output.keys()) == {SUMMARY, READER_LEVEL}: 
+    if set(raw_data.output.keys()) != {SUMMARY, READER_LEVEL}: 
         raise ValueError("required data was not returned by openai.")
 
 
