@@ -52,6 +52,7 @@ python main.py --tag python --sort likes --keyword scraping --ai True
 
 ### 全体フロー
 
+```text
 CLI input
     ↓
 Query Builder
@@ -65,9 +66,11 @@ AI Processor
 Sorter
     ↓
 OutPut Formatter
+```
 
 ### AI処理フロー
 
+```text
 Article Data
     ↓
 Cost Check / Optimization
@@ -77,11 +80,13 @@ AI Processing (summary / level estimation)
 Store Result
     ↓
 Return Processed Data
+```
 
 ---
 
 ## プロジェクト構造
 
+```text
 program_files/
 ├main.py
 ├config.py
@@ -113,6 +118,7 @@ program_files/
 └storage/
     ├scheme.py
     └storage.py
+```
 
 ---
 
@@ -162,6 +168,7 @@ program_files/
 - 相互参照を避けること
 - 特殊オブジェクトはクラス化などして閉じ込めること
 - TypedDict,dataclassなどを用いて意味付けを行うこと
+
 加えて、より理解を深め、習得しないといけないと学んだこともあった。以下にその一部を示す。
 - 変数・関数・クラス・ファイルの明確な命名
 - 定数・クラス型の管理
